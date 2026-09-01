@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elan Barre — Tu mejor versión comienza aquí</title>
+<meta name="description" content="Elan Barre. Ballet, pilates y fuerza en una sola disciplina. Aparta tu clase.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --negro:#0c0a08;
+    --carbon:#171310;
+    --cafe:#2e2620;
+    --oro:#c9a45c;
+    --oro-claro:#e6cd96;
+    --oro-suave:#b08f4f;
+    --crema:#f4efe6;
+    --beige:#e9e0d1;
+    --beige-med:#d8cbb4;
+    --tinta:#33291d;
+    --tinta-suave:#6b5d4a;
+    --blanco:#fffdf9;
+    --ok:#4a7c59;
+    --error:#a04b3c;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Jost',system-ui,sans-serif;
+    background:var(--negro);
+    color:var(--crema);
+    line-height:1.6;
+    font-weight:300;
+  }
+  h1,h2,h3,.serif{font-family:'Cormorant Garamond',Georgia,serif;font-weight:500}
+  img{max-width:100%;display:block}
+  a{color:inherit;text-decoration:none}
+
+  .wrap{max-width:1100px;margin:0 auto;padding:0 24px}
+  .eyebrow{
+    letter-spacing:.42em;text-transform:uppercase;font-size:.72rem;
+    color:var(--oro);font-weight:500;
+  }
+  .divider{
+    display:flex;align-items:center;gap:10px;justify-content:center;margin:18px auto;
+  }
+  .divider::before,.divider::after{
+    content:"";height:1px;width:70px;background:linear-gradient(90deg,transparent,var(--oro));
+  }
+  .divider::after{background:linear-gradient(90deg,var(--oro),transparent)}
+  .divider .star{color:var(--oro-claro);font-size:.8rem;text-shadow:0 0 10px var(--oro-claro)}
+
+  /* ---------- NAV ---------- */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:50;
+    background:rgba(12,10,8,.82);backdrop-filter:blur(10px);
+    border-bottom:1px solid rgba(201,164,92,.18);
+  }
+  .nav-inner{
+    max-width:1100px;margin:0 auto;padding:14px 24px;
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+  }
+  .brand{display:flex;flex-direction:column;line-height:1.05}
+  .brand .b1{
+    font-family:'Cormorant Garamond',serif;font-size:1.35rem;letter-spacing:.34em;
+    color:var(--oro-claro);
+  }
+  .brand .b2{letter-spacing:.52em;font-size:.58rem;text-transform:uppercase;color:var(--crema);margin-top:2px}
+  .nav-links{display:flex;gap:26px;font-size:.8rem;letter-spacing:.18em;text-transform:uppercase}
+  .nav-links a{opacity:.85;transition:.2s}
+  .nav-links a:hover{color:var(--oro-claro);opacity:1}
+  .btn{
+    display:inline-block;border:1px solid var(--oro);color:var(--oro-claro);
+    padding:11px 28px;letter-spacing:.24em;text-transform:uppercase;font-size:.74rem;
+    background:transparent;cursor:pointer;transition:.25s;font-family:'Jost',sans-serif;
+  }
+  .btn:hover{background:var(--oro);color:var(--negro)}
+  .btn.solid{background:var(--oro);color:var(--negro);font-weight:500}
+  .btn.solid:hover{background:var(--oro-claro);border-color:var(--oro-claro)}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  @media(max-width:760px){.nav-links{display:none}}
+
+  /* ---------- HERO ---------- */
+  header{
+    min-height:100svh;display:flex;align-items:center;justify-content:center;text-align:center;
+    position:relative;overflow:hidden;
+    background:
+      radial-gradient(ellipse at 70% 10%, rgba(201,164,92,.16), transparent 55%),
+      radial-gradient(ellipse at 20% 90%, rgba(201,164,92,.07), transparent 50%),
+      var(--negro);
+  }
+  header::after{
+    content:"";position:absolute;inset:0;
+    background:url('hero.jpg') 100% 22%/240% no-repeat;
+    opacity:.26;mix-blend-mode:luminosity;
+  }
+  .hero-content{position:relative;z-index:2;padding:120px 24px 80px}
+  .hero-content h1{
+    font-size:clamp(3rem,9vw,5.6rem);letter-spacing:.3em;color:var(--oro-claro);
+    text-shadow:0 0 40px rgba(201,164,92,.35);font-weight:500;margin-left:.3em;
+  }
+  .hero-content .sub{
+    letter-spacing:.5em;text-transform:uppercase;font-size:clamp(.8rem,2vw,1rem);
+    color:var(--crema);margin:6px 0 0;margin-left:.5em;
+  }
+  .hero-content p.lema{
+    font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.35rem;
+    color:var(--beige-med);margin:26px 0 38px;
+  }
+  .glow-line{position:relative;width:min(420px,70%);height:1px;margin:0 auto;
+    background:linear-gradient(90deg,transparent,var(--oro),transparent)}
+  .glow-line::after{content:"";position:absolute;left:50%;top:50%;width:7px;height:7px;
+    transform:translate(-50%,-50%) rotate(45deg);background:var(--oro-claro);
+    box-shadow:0 0 14px 3px rgba(230,205,150,.8)}
+
+  /* ---------- SECTIONS ---------- */
+  section{padding:96px 0}
+  .sec-head{text-align:center;margin-bottom:56px}
+  .sec-head h2{font-size:clamp(2rem,5vw,3rem);letter-spacing:.14em;color:var(--oro-claro)}
+  .dark{background:var(--negro)}
+  .light{background:var(--crema);color:var(--tinta)}
+  .light .sec-head h2{color:var(--tinta)}
+  .light .eyebrow{color:var(--oro-suave)}
+
+  /* que es barre */
+  .two-col{display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:center}
+  @media(max-width:820px){.two-col{grid-template-columns:1fr}}
+  .two-col .txt p{margin-bottom:18px;font-size:1.02rem;color:var(--tinta-suave)}
+  .two-col .txt strong{color:var(--tinta);font-weight:500}
+  .foto{position:relative}
+  .foto img{box-shadow:24px 24px 0 rgba(176,143,79,.18)}
+  .pill-row{display:flex;gap:14px;margin-top:26px;flex-wrap:wrap}
+  .pill{
+    border:1px solid var(--oro-suave);color:var(--tinta);padding:8px 18px;
+    letter-spacing:.22em;font-size:.7rem;text-transform:uppercase;border-radius:999px;
+  }
+
+  /* valores */
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  @media(max-width:820px){.cards{grid-template-columns:1fr}}
+  .card{position:relative;overflow:hidden;aspect-ratio:1/1;
+    border:1px solid rgba(201,164,92,.25)}
+  .card img{width:100%;height:100%;object-fit:cover;transition:.5s}
+  .card:hover img{transform:scale(1.04)}
+
+  /* ---------- CALENDARIO ---------- */
+  #calendario .cal-shell{
+    background:var(--blanco);border:1px solid var(--beige-med);
+    box-shadow:0 30px 60px -30px rgba(51,41,29,.35);padding:28px;
+  }
+  .cal-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;flex-wrap:wrap}
+  .cal-top h3{font-size:1.5rem;color:var(--tinta);letter-spacing:.06em}
+  .cal-nav{display:flex;gap:8px}
+  .cal-nav button{
+    border:1px solid var(--beige-med);background:var(--blanco);width:42px;height:42px;
+    font-size:1.1rem;cursor:pointer;color:var(--tinta);transition:.2s;
+  }
+  .cal-nav button:hover:not(:disabled){border-color:var(--oro-suave);color:var(--oro-suave)}
+  .cal-nav button:disabled{opacity:.35;cursor:not-allowed}
+  .cal-note{font-size:.82rem;color:var(--tinta-suave);margin-bottom:20px}
+  .cal-grid{display:grid;grid-template-columns:64px repeat(5,1fr);gap:6px;min-width:640px}
+  .cal-scroll{overflow-x:auto;padding-bottom:6px}
+  .cal-grid .hcell{
+    text-align:center;padding:10px 4px 12px;border-bottom:2px solid var(--beige);
+  }
+  .cal-grid .hcell .dow{letter-spacing:.2em;text-transform:uppercase;font-size:.68rem;color:var(--tinta-suave)}
+  .cal-grid .hcell .dnum{font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--tinta)}
+  .cal-grid .hcell.today .dnum{color:var(--oro-suave)}
+  .hora-lbl{
+    display:flex;align-items:center;justify-content:flex-end;padding-right:10px;
+    font-size:.78rem;color:var(--tinta-suave);letter-spacing:.05em;
+  }
+  .slot{
+    border:1px solid var(--beige);background:var(--blanco);min-height:56px;cursor:pointer;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+    transition:.18s;font-family:'Jost',sans-serif;padding:6px 4px;
+  }
+  .slot .st{letter-spacing:.14em;text-transform:uppercase;font-size:.64rem}
+  .slot .lug{font-size:.72rem;color:var(--tinta-suave)}
+  .slot.libre{border-color:var(--beige-med)}
+  .slot.libre .st{color:var(--ok)}
+  .slot.libre:hover{border-color:var(--oro-suave);background:#fbf7ee;transform:translateY(-1px)}
+  .slot.lleno{background:var(--beige);cursor:not-allowed}
+  .slot.lleno .st{color:var(--error)}
+  .slot.pasado{background:repeating-linear-gradient(-45deg,#f6f2ea,#f6f2ea 6px,#efe9dd 6px,#efe9dd 12px);cursor:not-allowed}
+  .slot.pasado .st{color:#b9ad99}
+  .cal-leyenda{display:flex;gap:22px;margin-top:18px;font-size:.75rem;color:var(--tinta-suave);flex-wrap:wrap}
+  .cal-leyenda span{display:flex;align-items:center;gap:7px}
+  .dot{width:10px;height:10px;border-radius:50%}
+  .dot.d1{background:var(--ok)} .dot.d2{background:var(--error)} .dot.d3{background:#b9ad99}
+  .cargando{padding:40px;text-align:center;color:var(--tinta-suave);letter-spacing:.2em;text-transform:uppercase;font-size:.75rem}
+
+  /* ---------- CONTACTO ---------- */
+  #contacto .contact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;text-align:center}
+  @media(max-width:820px){#contacto .contact-grid{grid-template-columns:1fr}}
+  .c-item{border:1px solid rgba(201,164,92,.25);padding:36px 20px}
+  .c-item .ico{font-size:1.4rem;color:var(--oro-claro)}
+  .c-item h3{letter-spacing:.24em;text-transform:uppercase;font-size:.8rem;color:var(--oro);margin:12px 0 8px;font-family:'Jost',sans-serif;font-weight:500}
+  .c-item p{color:var(--beige-med);font-size:.95rem}
+  .c-item a{color:var(--oro-claro);border-bottom:1px solid rgba(201,164,92,.4);transition:.2s}
+  .c-item a:hover{color:var(--crema);border-color:var(--crema)}
+  .mapa{margin-top:22px;border:1px solid rgba(201,164,92,.25)}
+  .mapa iframe{display:block}
+
+  footer{border-top:1px solid rgba(201,164,92,.18);padding:34px 0;text-align:center}
+  footer .f-brand{letter-spacing:.4em;color:var(--oro-claro);font-family:'Cormorant Garamond',serif;font-size:1.1rem}
+  footer p{font-size:.72rem;color:#7d715f;margin-top:8px;letter-spacing:.08em}
+  footer .admin-link{opacity:.45;font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;margin-top:14px;display:inline-block;cursor:pointer}
+  footer .admin-link:hover{opacity:1;color:var(--oro-claro)}
+
+  /* ---------- MODALES ---------- */
+  .modal-bg{
+    position:fixed;inset:0;background:rgba(12,10,8,.75);backdrop-filter:blur(4px);
+    display:flex;align-items:center;justify-content:center;z-index:100;padding:20px;
+  }
+  .modal{
+    background:var(--crema);color:var(--tinta);max-width:440px;width:100%;
+    padding:36px 32px;position:relative;border-top:3px solid var(--oro);
+    max-height:90vh;overflow-y:auto;
+  }
+  .modal.wide{max-width:720px}
+  .modal .x{
+    position:absolute;top:10px;right:14px;background:none;border:none;font-size:1.5rem;
+    cursor:pointer;color:var(--tinta-suave);
+  }
+  .modal h3{font-size:1.5rem;letter-spacing:.08em;margin-bottom:4px}
+  .modal .sub{font-size:.85rem;color:var(--tinta-suave);margin-bottom:22px}
+  .modal label{display:block;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--tinta-suave);margin:16px 0 6px}
+  .modal input{
+    width:100%;padding:12px 14px;border:1px solid var(--beige-med);background:var(--blanco);
+    font-family:'Jost',sans-serif;font-size:1rem;color:var(--tinta);
+  }
+  .modal input:focus{outline:none;border-color:var(--oro-suave)}
+  .modal .btn{width:100%;margin-top:26px}
+  .msg{margin-top:14px;font-size:.85rem;display:none;padding:10px 12px}
+  .msg.err{display:block;background:#f6e4e0;color:var(--error)}
+  .msg.ok{display:block;background:#e4eee6;color:var(--ok)}
+  .resumen{
+    background:var(--blanco);border:1px solid var(--beige-med);padding:14px 16px;margin-top:6px;
+    display:flex;justify-content:space-between;align-items:center;gap:10px;
+  }
+  .resumen .fecha{font-family:'Cormorant Garamond',serif;font-size:1.15rem}
+  .resumen .hora{letter-spacing:.1em;color:var(--oro-suave);font-weight:500}
+  .fine{font-size:.72rem;color:var(--tinta-suave);margin-top:14px;line-height:1.5}
+
+  /* confirmación */
+  .conf-star{font-size:2.2rem;color:var(--oro-suave);text-align:center;margin-bottom:10px}
+  .conf-center{text-align:center}
+
+  /* admin */
+  .adm-day{display:flex;gap:10px;align-items:center;margin:14px 0 20px;flex-wrap:wrap}
+  .adm-day input{flex:1;min-width:170px}
+  .adm-tabla{width:100%;border-collapse:collapse;font-size:.9rem}
+  .adm-tabla th{
+    text-align:left;letter-spacing:.16em;text-transform:uppercase;font-size:.68rem;
+    color:var(--tinta-suave);border-bottom:2px solid var(--beige-med);padding:8px 10px;
+  }
+  .adm-tabla td{border-bottom:1px solid var(--beige);padding:9px 10px;vertical-align:top}
+  .adm-tabla td.h{white-space:nowrap;color:var(--oro-suave);font-weight:500}
+  .adm-vacio{color:#b9ad99}
+  .adm-bar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+  .adm-bar .who{font-size:.78rem;color:var(--tinta-suave)}
+  .linklike{background:none;border:none;color:var(--oro-suave);cursor:pointer;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;font-family:'Jost',sans-serif}
+  [hidden]{display:none!important}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="#inicio" class="brand"><span class="b1">ELAN</span><span class="b2">Barre</span></a>
+    <div class="nav-links">
+      <a href="#que-es">¿Qué es barre?</a>
+      <a href="#valores">Filosofía</a>
+      <a href="#calendario">Calendario</a>
+      <a href="#contacto">Contacto</a>
+    </div>
+    <a href="#calendario" class="btn solid">Aparta tu clase</a>
+  </div>
+</nav>
+
+<header id="inicio">
+  <div class="hero-content">
+    <p class="eyebrow">Ballet · Pilates · Fuerza</p>
+    <h1>ELAN</h1>
+    <p class="sub">B A R R E</p>
+    <div class="glow-line" style="margin-top:30px"></div>
+    <p class="lema">Tu mejor versión comienza aquí.</p>
+    <a href="#calendario" class="btn">Reserva tu lugar</a>
+  </div>
+</header>
+
+<section id="que-es" class="light">
+  <div class="wrap two-col">
+    <div class="txt">
+      <p class="eyebrow">Más que una clase, un estilo de vida</p>
+      <h2 style="font-size:clamp(2rem,5vw,2.8rem);margin:12px 0 22px">¿Qué es barre?</h2>
+      <p>El <strong>barre</strong> es un entrenamiento físico de bajo impacto y alta intensidad que fusiona movimientos del <strong>ballet, pilates, yoga y entrenamiento funcional</strong>.</p>
+      <p>Se caracteriza por el uso de una barra fija —como la de las bailarinas— y por enfocarse en la <strong>fuerza</strong>, la <strong>flexibilidad</strong> y la <strong>tonificación muscular profunda</strong>.</p>
+      <p>Un entrenamiento completo que trabaja tu cuerpo y tu mente.</p>
+      <div class="pill-row">
+        <span class="pill">Ballet</span><span class="pill">Pilates</span><span class="pill">Funcional</span>
+      </div>
+    </div>
+    <div class="foto"><img src="flatlay.jpg" alt="Ballet, pilates y fuerza: todo en una sola disciplina"></div>
+  </div>
+</section>
+
+<section id="valores" class="dark">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">¿Qué representa Elan Barre?</p>
+      <div class="divider"><span class="star">✦</span></div>
+      <h2>Nuestra filosofía</h2>
+    </div>
+    <div class="cards">
+      <div class="card"><img src="elegancia.jpg" alt="Elegancia — la confianza de moverte con seguridad y gracia"></div>
+      <div class="card"><img src="comunidad.jpg" alt="Comunidad — un lugar donde cada logro se celebra"></div>
+      <div class="card"><img src="disciplina.jpg" alt="Disciplina — el compromiso diario contigo misma"></div>
+    </div>
+  </div>
+</section>
+
+<section id="calendario" class="light">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Aparta tu lugar</p>
+      <div class="divider"><span class="star">✦</span></div>
+      <h2>Calendario de clases</h2>
+      <p style="color:var(--tinta-suave);margin-top:10px;font-size:.95rem">
+        Clases de 50 minutos · Lunes a viernes · 9:00 a. m. – 5:00 p. m.
+      </p>
+    </div>
+    <div class="cal-shell">
+      <div class="cal-top">
+        <h3 id="cal-titulo">Semana</h3>
+        <div class="cal-nav">
+          <button id="cal-prev" aria-label="Semana anterior">‹</button>
+          <button id="cal-next" aria-label="Semana siguiente">›</button>
+        </div>
+      </div>
+      <p class="cal-note">Elige un horario disponible y llena tus datos para apartar tu lugar.</p>
+      <div class="cal-scroll"><div id="cal-grid" class="cal-grid"></div></div>
+      <div id="cal-cargando" class="cargando" hidden>Cargando disponibilidad…</div>
+      <div class="cal-leyenda">
+        <span><i class="dot d1"></i>Disponible</span>
+        <span><i class="dot d2"></i>Lleno</span>
+        <span><i class="dot d3"></i>No disponible</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contacto" class="dark">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">¿Dudas? Escríbenos</p>
+      <div class="divider"><span class="star">✦</span></div>
+      <h2>Contacto</h2>
+    </div>
+    <div class="contact-grid">
+      <div class="c-item"><div class="ico">✆</div><h3>Teléfono / WhatsApp</h3>
+        <p>Ximena Barajas<br><a href="https://wa.me/524777974378" target="_blank" rel="noopener">+52 477 797 4378</a></p>
+        <p style="margin-top:10px">Valeria Barajas<br><a href="https://wa.me/524792650920" target="_blank" rel="noopener">+52 479 265 0920</a></p></div>
+      <div class="c-item"><div class="ico">✉</div><h3>Correo</h3><p><a href="mailto:elanbarre@gmail.com">elanbarre@gmail.com</a></p></div>
+      <div class="c-item"><div class="ico">✦</div><h3>Estudio</h3>
+        <p>Blvd. Algeciras #1402<br>esq. Puerto de Palos, Col. Arbide<br>León, Gto.</p>
+        <p style="margin-top:10px;font-size:.85rem;color:#a3957e">Lunes a viernes · 9:00 a. m. – 5:00 p. m.</p></div>
+    </div>
+    <div class="mapa">
+      <iframe src="https://www.google.com/maps?q=Boulevard%20Algeciras%201402%2C%20Arbide%2C%20Le%C3%B3n%2C%20Guanajuato&output=embed"
+        width="100%" height="380" style="border:0;filter:grayscale(35%) sepia(12%)" loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade" title="Mapa: Elan Barre, Blvd. Algeciras 1402, Col. Arbide, León"></iframe>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="f-brand">ELAN BARRE</div>
+  <p>© <span id="anio"></span> Elan Barre · Tu mejor versión comienza aquí.</p>
+  <span class="admin-link" id="abrir-admin">Acceso administrador</span>
+</footer>
+
+<!-- MODAL RESERVA -->
+<div class="modal-bg" id="m-reserva" hidden>
+  <div class="modal">
+    <button class="x" data-cierra="m-reserva">×</button>
+    <h3>Aparta tu clase</h3>
+    <p class="sub">Clase de 50 minutos. Llega 10 minutos antes.</p>
+    <div class="resumen">
+      <span class="fecha" id="r-fecha">—</span>
+      <span class="hora" id="r-hora">—</span>
+    </div>
+    <form id="f-reserva">
+      <label for="r-nombre">Nombre completo</label>
+      <input id="r-nombre" type="text" required maxlength="60" autocomplete="name" placeholder="Tu nombre">
+      <label for="r-tel">Teléfono (10 dígitos)</label>
+      <input id="r-tel" type="tel" required pattern="[0-9]{10}" maxlength="10" inputmode="numeric" autocomplete="tel" placeholder="4771234567">
+      <button class="btn solid" type="submit" id="r-btn">Confirmar reserva</button>
+      <div class="msg" id="r-msg"></div>
+      <p class="fine">Tus datos solo se usan para confirmar tu clase. En el calendario público únicamente se muestra que el horario está ocupado, nunca tu nombre.</p>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL CONFIRMACIÓN -->
+<div class="modal-bg" id="m-conf" hidden>
+  <div class="modal conf-center">
+    <button class="x" data-cierra="m-conf">×</button>
+    <div class="conf-star">✦</div>
+    <h3>¡Lugar apartado!</h3>
+    <p class="sub" id="conf-txt" style="margin-top:10px">Te esperamos.</p>
+    <button class="btn" data-cierra="m-conf" style="width:auto">Listo</button>
+  </div>
+</div>
+
+<!-- MODAL ADMIN LOGIN -->
+<div class="modal-bg" id="m-login" hidden>
+  <div class="modal">
+    <button class="x" data-cierra="m-login">×</button>
+    <h3>Acceso administrador</h3>
+    <p class="sub">Solo personal de Elan Barre.</p>
+    <button class="btn solid" type="button" id="l-google">Entrar con Google</button>
+    <div class="msg" id="l-msg"></div>
+    <p class="fine">Inicia sesión con la cuenta de Google del estudio. Solo las cuentas autorizadas pueden ver las inscripciones.</p>
+  </div>
+</div>
+
+<!-- MODAL ADMIN PANEL -->
+<div class="modal-bg" id="m-admin" hidden>
+  <div class="modal wide">
+    <button class="x" data-cierra="m-admin">×</button>
+    <div class="adm-bar">
+      <h3>Inscripciones</h3>
+      <div><span class="who" id="adm-who"></span> · <button class="linklike" id="adm-salir">Salir</button></div>
+    </div>
+    <p class="sub">Selecciona un día para ver quién apartó cada horario.</p>
+    <div class="adm-day">
+      <input type="date" id="adm-fecha">
+      <button class="btn" style="width:auto;margin:0;padding:11px 20px" id="adm-ver">Ver día</button>
+    </div>
+    <div id="adm-out"></div>
+  </div>
+</div>
+
+<script>
+/* ================== CONFIGURACIÓN ==================
+   Cambia aquí los datos del estudio sin tocar el resto. */
+const CONFIG = {
+  cupoPorClase: 8,            // PENDIENTE: confirmar cupo real por clase
+  horas: [9, 10, 11, 12, 14, 15, 16],   // sin clase de 13:00; última 16:00–16:50
+  diasHabiles: [1, 2, 3, 4, 5],          // lunes a viernes
+  semanasFuturas: 4,          // cuántas semanas adelante se puede reservar
+  telefono: "+52 477 797 4378",   // Ximena Barajas (principal); Valeria Barajas +52 479 265 0920
+  correo: "elanbarre@gmail.com",
+};
+
+/* Config de Firebase del proyecto elan-barre.
+   Si se pone en null, la página corre en MODO DEMO (los datos no se guardan). */
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyC9jHwidsxCmMAoKMwft6Rd3xOY0-groS0",
+  authDomain: "elan-barre.firebaseapp.com",
+  projectId: "elan-barre",
+  storageBucket: "elan-barre.firebasestorage.app",
+  messagingSenderId: "543751142093",
+  appId: "1:543751142093:web:55a002b27b1af838728784",
+};
+
+/* Correos con acceso al panel de administrador (deben coincidir con las
+   reglas de seguridad de Firestore). */
+const ADMINS = ["elanbarre@gmail.com", "rascenciobaker@gmail.com"];
+
+/* ================== UTILIDADES DE FECHA ================== */
+const MESES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+const DOWS = ["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
+const fmtISO = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+const fmtHora = h => {
+  const ampm = h < 12 ? "a. m." : "p. m.";
+  const h12 = h % 12 === 0 ? 12 : h % 12;
+  return `${h12}:00 ${ampm}`;
+};
+const fmtHumana = d => `${DOWS[d.getDay()]} ${d.getDate()} de ${MESES[d.getMonth()]}`;
+function lunesDe(base){
+  const d = new Date(base.getFullYear(), base.getMonth(), base.getDate());
+  const day = d.getDay();
+  d.setDate(d.getDate() - (day === 0 ? 6 : day - 1));
+  return d;
+}
+
+/* ================== BACKEND ================== */
+/* Interfaz: cargarCupos(fechasISO[]) -> {"fecha_hora": n}
+             reservar(fechaISO, hora, nombre, tel) -> {ok} | {error}
+             login(mail, pass) -> {ok, quien} | {error}
+             logout()
+             reservasDelDia(fechaISO) -> [{hora, nombre, telefono}] */
+
+function backendDemo(){
+  const mem = {};   // solo en memoria: se borra al recargar
+  let dentro = null;
+  return {
+    demo: true,
+    async cargarCupos(fechas){
+      const out = {};
+      for (const f of fechas) for (const h of CONFIG.horas){
+        const k = `${f}_${h}`;
+        out[k] = (mem[k] || []).length;
+      }
+      return out;
+    },
+    async reservar(f, h, nombre, tel){
+      const k = `${f}_${h}`;
+      mem[k] = mem[k] || [];
+      if (mem[k].length >= CONFIG.cupoPorClase) return { error: "lleno" };
+      mem[k].push({ hora: h, nombre, telefono: tel });
+      return { ok: true };
+    },
+    async login(){
+      dentro = "demo@elanbarre.mx";
+      return { ok: true, quien: dentro };
+    },
+    async logout(){ dentro = null; },
+    async reservasDelDia(f){
+      const out = [];
+      for (const h of CONFIG.horas) for (const r of (mem[`${f}_${h}`] || [])) out.push(r);
+      return out;
+    },
+  };
+}
+
+function backendFirebase(cfg){
+  let db, auth, mods = null;
+  async function init(){
+    if (mods) return mods;
+    const [appM, fsM, authM] = await Promise.all([
+      import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"),
+      import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"),
+      import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"),
+    ]);
+    const app = appM.initializeApp(cfg);
+    db = fsM.getFirestore(app);
+    auth = authM.getAuth(app);
+    mods = { fsM, authM };
+    return mods;
+  }
+  return {
+    demo: false,
+    async cargarCupos(fechas){
+      const { fsM } = await init();
+      const out = {};
+      const lecturas = [];
+      for (const f of fechas) for (const h of CONFIG.horas){
+        const k = `${f}_${h}`;
+        lecturas.push(fsM.getDoc(fsM.doc(db, "cupos", k)).then(s => { out[k] = s.exists() ? (s.data().n || 0) : 0; }));
+      }
+      await Promise.all(lecturas);
+      return out;
+    },
+    async reservar(f, h, nombre, tel){
+      const { fsM } = await init();
+      const cupoRef = fsM.doc(db, "cupos", `${f}_${h}`);
+      const resRef = fsM.doc(fsM.collection(db, "reservas"));
+      try {
+        await fsM.runTransaction(db, async tx => {
+          const s = await tx.get(cupoRef);
+          const n = s.exists() ? (s.data().n || 0) : 0;
+          if (n >= CONFIG.cupoPorClase) throw new Error("lleno");
+          tx.set(cupoRef, { n: n + 1, fecha: f, hora: h }, { merge: true });
+          tx.set(resRef, { fecha: f, hora: h, nombre, telefono: tel, creado: fsM.serverTimestamp() });
+        });
+        return { ok: true };
+      } catch (e){
+        if (String(e.message).includes("lleno")) return { error: "lleno" };
+        console.error(e);
+        return { error: "No se pudo guardar la reserva. Intenta de nuevo." };
+      }
+    },
+    async login(){
+      const { authM } = await init();
+      try {
+        const prov = new authM.GoogleAuthProvider();
+        const cred = await authM.signInWithPopup(auth, prov);
+        const mail = (cred.user.email || "").toLowerCase();
+        if (!ADMINS.includes(mail)){
+          await authM.signOut(auth);
+          return { error: "Esta cuenta no tiene acceso al panel." };
+        }
+        return { ok: true, quien: mail };
+      } catch (e){
+        if (String(e.code).includes("popup-closed")) return { error: "Se cerró la ventana de Google. Intenta de nuevo." };
+        console.error(e);
+        return { error: "No se pudo iniciar sesión. Intenta de nuevo." };
+      }
+    },
+    async logout(){
+      const { authM } = await init();
+      await authM.signOut(auth);
+    },
+    async reservasDelDia(f){
+      const { fsM } = await init();
+      const q = fsM.query(fsM.collection(db, "reservas"), fsM.where("fecha", "==", f));
+      const snap = await fsM.getDocs(q);
+      const out = [];
+      snap.forEach(d => out.push(d.data()));
+      return out;
+    },
+  };
+}
+
+const backend = FIREBASE_CONFIG ? backendFirebase(FIREBASE_CONFIG) : backendDemo();
+
+/* ================== CALENDARIO ================== */
+let semana = 0;          // 0 = semana actual
+let cupos = {};          // cache "fecha_hora" -> n
+let sel = null;          // {fechaISO, fechaHumana, hora}
+
+const $ = id => document.getElementById(id);
+
+function diasDeSemana(offset){
+  const lun = lunesDe(new Date());
+  lun.setDate(lun.getDate() + offset * 7);
+  return CONFIG.diasHabiles.map(i => {
+    const d = new Date(lun);
+    d.setDate(lun.getDate() + (i - 1));
+    return d;
+  });
+}
+
+async function pintarSemana(){
+  const dias = diasDeSemana(semana);
+  const hoyISO = fmtISO(new Date());
+  const ahora = new Date();
+
+  const d0 = dias[0], d4 = dias[4];
+  const mismoMes = d0.getMonth() === d4.getMonth();
+  $("cal-titulo").textContent = mismoMes
+    ? `${d0.getDate()} – ${d4.getDate()} de ${MESES[d0.getMonth()]}`
+    : `${d0.getDate()} de ${MESES[d0.getMonth()]} – ${d4.getDate()} de ${MESES[d4.getMonth()]}`;
+  $("cal-prev").disabled = semana <= 0;
+  $("cal-next").disabled = semana >= CONFIG.semanasFuturas;
+
+  $("cal-grid").hidden = true;
+  $("cal-cargando").hidden = false;
+  try {
+    cupos = await backend.cargarCupos(dias.map(fmtISO));
+  } catch(e){
+    console.error(e);
+    cupos = {};
+  }
+  $("cal-cargando").hidden = true;
+  $("cal-grid").hidden = false;
+
+  const g = $("cal-grid");
+  g.innerHTML = "";
+  g.appendChild(document.createElement("div")); // esquina vacía
+  for (const d of dias){
+    const c = document.createElement("div");
+    c.className = "hcell" + (fmtISO(d) === hoyISO ? " today" : "");
+    c.innerHTML = `<div class="dow">${DOWS[d.getDay()]}</div><div class="dnum">${d.getDate()}</div>`;
+    g.appendChild(c);
+  }
+  for (const h of CONFIG.horas){
+    const lbl = document.createElement("div");
+    lbl.className = "hora-lbl";
+    lbl.textContent = fmtHora(h);
+    g.appendChild(lbl);
+    for (const d of dias){
+      const iso = fmtISO(d);
+      const n = cupos[`${iso}_${h}`] || 0;
+      const libres = Math.max(0, CONFIG.cupoPorClase - n);
+      const finClase = new Date(d); finClase.setHours(h, 50, 0, 0);
+      const pasado = finClase <= ahora;
+      const cell = document.createElement("div");
+      let cls = "libre", st = "Disponible", lug = `${libres} lugar${libres === 1 ? "" : "es"}`;
+      if (pasado){ cls = "pasado"; st = "—"; lug = ""; }
+      else if (libres === 0){ cls = "lleno"; st = "Lleno"; lug = ""; }
+      cell.className = `slot ${cls}`;
+      cell.innerHTML = `<span class="st">${st}</span>${lug ? `<span class="lug">${lug}</span>` : ""}`;
+      if (cls === "libre"){
+        cell.addEventListener("click", () => abrirReserva(iso, fmtHumana(d), h));
+      }
+      g.appendChild(cell);
+    }
+  }
+}
+
+/* ================== RESERVA ================== */
+function abrirReserva(iso, humana, hora){
+  sel = { iso, humana, hora };
+  $("r-fecha").textContent = humana;
+  $("r-hora").textContent = `${fmtHora(hora)} – ${fmtHora(hora).replace(":00", ":50")}`;
+  $("r-msg").className = "msg";
+  $("f-reserva").reset();
+  $("m-reserva").hidden = false;
+  $("r-nombre").focus();
+}
+
+$("f-reserva").addEventListener("submit", async e => {
+  e.preventDefault();
+  const nombre = $("r-nombre").value.trim();
+  const tel = $("r-tel").value.trim();
+  const msg = $("r-msg");
+  if (nombre.length < 3){ msg.textContent = "Escribe tu nombre completo."; msg.className = "msg err"; return; }
+  if (!/^[0-9]{10}$/.test(tel)){ msg.textContent = "El teléfono debe tener 10 dígitos."; msg.className = "msg err"; return; }
+  $("r-btn").disabled = true;
+  msg.className = "msg";
+  const r = await backend.reservar(sel.iso, sel.hora, nombre, tel);
+  $("r-btn").disabled = false;
+  if (r.error === "lleno"){
+    msg.textContent = "Ese horario se acaba de llenar. Elige otro, por favor.";
+    msg.className = "msg err";
+    pintarSemana();
+    return;
+  }
+  if (r.error){ msg.textContent = r.error; msg.className = "msg err"; return; }
+  $("m-reserva").hidden = true;
+  $("conf-txt").innerHTML = `Te esperamos el <strong>${sel.humana}</strong> a las <strong>${fmtHora(sel.hora)}</strong>.<br>Llega 10 minutos antes de tu clase.` + (backend.demo ? "<br><br><em>(Modo demostración: la reserva no queda guardada.)</em>" : "");
+  $("m-conf").hidden = false;
+  pintarSemana();
+});
+
+/* ================== ADMIN ================== */
+$("abrir-admin").addEventListener("click", () => {
+  $("l-msg").className = "msg";
+  $("m-login").hidden = false;
+});
+
+$("l-google").addEventListener("click", async () => {
+  const r = await backend.login();
+  if (r.error){
+    const m = $("l-msg"); m.textContent = r.error; m.className = "msg err"; return;
+  }
+  $("m-login").hidden = true;
+  $("adm-who").textContent = r.quien;
+  $("adm-fecha").value = fmtISO(new Date());
+  $("m-admin").hidden = false;
+  verDiaAdmin();
+});
+
+$("adm-salir").addEventListener("click", async () => {
+  await backend.logout();
+  $("m-admin").hidden = true;
+});
+
+$("adm-ver").addEventListener("click", verDiaAdmin);
+
+async function verDiaAdmin(){
+  const f = $("adm-fecha").value;
+  if (!f) return;
+  const out = $("adm-out");
+  out.innerHTML = '<div class="cargando">Cargando…</div>';
+  let lista = [];
+  try { lista = await backend.reservasDelDia(f); }
+  catch(e){ out.innerHTML = '<p class="adm-vacio">No se pudieron cargar las reservas (¿sesión válida?).</p>'; return; }
+  const porHora = {};
+  for (const r of lista) (porHora[r.hora] = porHora[r.hora] || []).push(r);
+  let html = '<table class="adm-tabla"><thead><tr><th>Horario</th><th>Inscritos</th><th>Nombre</th><th>Teléfono</th></tr></thead><tbody>';
+  for (const h of CONFIG.horas){
+    const rs = (porHora[h] || []);
+    if (rs.length === 0){
+      html += `<tr><td class="h">${fmtHora(h)}</td><td>0/${CONFIG.cupoPorClase}</td><td class="adm-vacio" colspan="2">Sin inscripciones</td></tr>`;
+    } else {
+      rs.forEach((r, i) => {
+        html += `<tr>${i === 0 ? `<td class="h" rowspan="${rs.length}">${fmtHora(h)}</td><td rowspan="${rs.length}">${rs.length}/${CONFIG.cupoPorClase}</td>` : ""}<td>${r.nombre}</td><td>${r.telefono}</td></tr>`;
+      });
+    }
+  }
+  html += "</tbody></table>";
+  out.innerHTML = html;
+}
+
+/* ================== GENERALES ================== */
+document.querySelectorAll("[data-cierra]").forEach(b =>
+  b.addEventListener("click", () => $(b.dataset.cierra).hidden = true));
+document.querySelectorAll(".modal-bg").forEach(m =>
+  m.addEventListener("click", e => { if (e.target === m) m.hidden = true; }));
+
+$("cal-prev").addEventListener("click", () => { if (semana > 0){ semana--; pintarSemana(); } });
+$("cal-next").addEventListener("click", () => { if (semana < CONFIG.semanasFuturas){ semana++; pintarSemana(); } });
+
+$("anio").textContent = new Date().getFullYear();
+
+pintarSemana();
+</script>
+</body>
+</html>
