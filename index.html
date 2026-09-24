@@ -24,6 +24,7 @@
     --blanco:#fffdf9;
     --ok:#4a7c59;
     --error:#a04b3c;
+    --aviso:#8a6a1f;
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html{scroll-behavior:smooth}
@@ -37,6 +38,7 @@
   h1,h2,h3,.serif{font-family:'Cormorant Garamond',Georgia,serif;font-weight:500}
   img{max-width:100%;display:block}
   a{color:inherit;text-decoration:none}
+  button{font-family:'Jost',sans-serif}
 
   .wrap{max-width:1100px;margin:0 auto;padding:0 24px}
   .eyebrow{
@@ -68,19 +70,30 @@
     color:var(--oro-claro);
   }
   .brand .b2{letter-spacing:.52em;font-size:.58rem;text-transform:uppercase;color:var(--crema);margin-top:2px}
-  .nav-links{display:flex;gap:26px;font-size:.8rem;letter-spacing:.18em;text-transform:uppercase}
-  .nav-links a{opacity:.85;transition:.2s}
+  .nav-links{display:flex;gap:22px;font-size:.78rem;letter-spacing:.16em;text-transform:uppercase}
+  .nav-links a{opacity:.85;transition:.2s;white-space:nowrap}
   .nav-links a:hover{color:var(--oro-claro);opacity:1}
+  .nav-right{display:flex;align-items:center;gap:10px}
   .btn{
     display:inline-block;border:1px solid var(--oro);color:var(--oro-claro);
     padding:11px 28px;letter-spacing:.24em;text-transform:uppercase;font-size:.74rem;
     background:transparent;cursor:pointer;transition:.25s;font-family:'Jost',sans-serif;
+    text-align:center;
   }
   .btn:hover{background:var(--oro);color:var(--negro)}
   .btn.solid{background:var(--oro);color:var(--negro);font-weight:500}
   .btn.solid:hover{background:var(--oro-claro);border-color:var(--oro-claro)}
+  .btn.small{padding:8px 16px;font-size:.66rem;letter-spacing:.18em}
+  .btn.peligro{border-color:var(--error);color:var(--error)}
+  .btn.peligro:hover{background:var(--error);color:#fff}
   .btn:disabled{opacity:.4;cursor:not-allowed}
-  @media(max-width:760px){.nav-links{display:none}}
+  .btn-cuenta{display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+  .saldo-pill{
+    background:var(--negro);color:var(--oro-claro);border-radius:999px;padding:2px 9px;
+    font-size:.66rem;letter-spacing:.06em;
+  }
+  @media(max-width:860px){.nav-links{display:none}}
+  @media(max-width:480px){.nav-right .btn{padding:9px 14px;font-size:.66rem;letter-spacing:.14em}}
 
   /* ---------- HERO ---------- */
   header{
@@ -109,6 +122,7 @@
     font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.35rem;
     color:var(--beige-med);margin:26px 0 38px;
   }
+  .hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
   .glow-line{position:relative;width:min(420px,70%);height:1px;margin:0 auto;
     background:linear-gradient(90deg,transparent,var(--oro),transparent)}
   .glow-line::after{content:"";position:absolute;left:50%;top:50%;width:7px;height:7px;
@@ -119,9 +133,11 @@
   section{padding:96px 0}
   .sec-head{text-align:center;margin-bottom:56px}
   .sec-head h2{font-size:clamp(2rem,5vw,3rem);letter-spacing:.14em;color:var(--oro-claro)}
+  .sec-head .intro{margin-top:10px;font-size:.95rem;color:var(--beige-med)}
   .dark{background:var(--negro)}
   .light{background:var(--crema);color:var(--tinta)}
   .light .sec-head h2{color:var(--tinta)}
+  .light .sec-head .intro{color:var(--tinta-suave)}
   .light .eyebrow{color:var(--oro-suave)}
 
   /* que es barre */
@@ -150,6 +166,7 @@
     background:var(--blanco);border:1px solid var(--beige-med);
     box-shadow:0 30px 60px -30px rgba(51,41,29,.35);padding:28px;
   }
+  @media(max-width:600px){#calendario .cal-shell{padding:18px 12px}}
   .cal-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;flex-wrap:wrap}
   .cal-top h3{font-size:1.5rem;color:var(--tinta);letter-spacing:.06em}
   .cal-nav{display:flex;gap:8px}
@@ -160,7 +177,7 @@
   .cal-nav button:hover:not(:disabled){border-color:var(--oro-suave);color:var(--oro-suave)}
   .cal-nav button:disabled{opacity:.35;cursor:not-allowed}
   .cal-note{font-size:.82rem;color:var(--tinta-suave);margin-bottom:20px}
-  .cal-grid{display:grid;grid-template-columns:64px repeat(5,1fr);gap:6px;min-width:640px}
+  .cal-grid{display:grid;grid-template-columns:74px repeat(5,1fr);gap:6px;min-width:640px}
   .cal-scroll{overflow-x:auto;padding-bottom:6px}
   .cal-grid .hcell{
     text-align:center;padding:10px 4px 12px;border-bottom:2px solid var(--beige);
@@ -169,13 +186,14 @@
   .cal-grid .hcell .dnum{font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--tinta)}
   .cal-grid .hcell.today .dnum{color:var(--oro-suave)}
   .hora-lbl{
-    display:flex;align-items:center;justify-content:flex-end;padding-right:10px;
-    font-size:.78rem;color:var(--tinta-suave);letter-spacing:.05em;
+    display:flex;flex-direction:column;align-items:flex-end;justify-content:center;padding-right:10px;
+    font-size:.78rem;color:var(--tinta-suave);letter-spacing:.05em;line-height:1.25;
   }
+  .hora-lbl small{font-size:.62rem;color:#b9ad99}
   .slot{
-    border:1px solid var(--beige);background:var(--blanco);min-height:56px;cursor:pointer;
+    border:1px solid var(--beige);background:var(--blanco);min-height:58px;cursor:pointer;
     display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
-    transition:.18s;font-family:'Jost',sans-serif;padding:6px 4px;
+    transition:.18s;font-family:'Jost',sans-serif;padding:6px 4px;position:relative;
   }
   .slot .st{letter-spacing:.14em;text-transform:uppercase;font-size:.64rem}
   .slot .lug{font-size:.72rem;color:var(--tinta-suave)}
@@ -186,27 +204,70 @@
   .slot.lleno .st{color:var(--error)}
   .slot.pasado{background:repeating-linear-gradient(-45deg,#f6f2ea,#f6f2ea 6px,#efe9dd 6px,#efe9dd 12px);cursor:not-allowed}
   .slot.pasado .st{color:#b9ad99}
+  .slot.mio{border:2px solid var(--oro-suave);background:#fbf5e6}
+  .slot.mio .st{color:var(--oro-suave);font-weight:500}
+  .slot.mio:hover{background:#f7edd6}
   .cal-leyenda{display:flex;gap:22px;margin-top:18px;font-size:.75rem;color:var(--tinta-suave);flex-wrap:wrap}
   .cal-leyenda span{display:flex;align-items:center;gap:7px}
   .dot{width:10px;height:10px;border-radius:50%}
-  .dot.d1{background:var(--ok)} .dot.d2{background:var(--error)} .dot.d3{background:#b9ad99}
+  .dot.d1{background:var(--ok)} .dot.d2{background:var(--error)} .dot.d3{background:#b9ad99} .dot.d4{background:var(--oro-suave)}
   .cargando{padding:40px;text-align:center;color:var(--tinta-suave);letter-spacing:.2em;text-transform:uppercase;font-size:.75rem}
+  .reglas{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:26px;
+  }
+  @media(max-width:820px){.reglas{grid-template-columns:1fr}}
+  .regla{border:1px solid var(--beige-med);padding:18px 20px;background:var(--blanco)}
+  .regla h4{font-family:'Jost',sans-serif;font-weight:500;letter-spacing:.2em;text-transform:uppercase;font-size:.68rem;color:var(--oro-suave);margin-bottom:6px}
+  .regla p{font-size:.86rem;color:var(--tinta-suave)}
+
+  /* ---------- PAQUETES ---------- */
+  .paquetes{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:22px;max-width:820px;margin:0 auto}
+  .paq{
+    border:1px solid rgba(201,164,92,.35);padding:34px 26px;text-align:center;position:relative;
+    background:linear-gradient(180deg,rgba(201,164,92,.06),transparent);
+  }
+  .paq.destacado{border-color:var(--oro)}
+  .paq .tag{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--oro);color:var(--negro);
+    font-size:.6rem;letter-spacing:.24em;text-transform:uppercase;padding:4px 12px;font-weight:500}
+  .paq h3{font-size:1.6rem;letter-spacing:.1em;color:var(--oro-claro)}
+  .paq .precio{font-family:'Cormorant Garamond',serif;font-size:3rem;color:var(--crema);margin:10px 0 2px;line-height:1}
+  .paq .precio small{font-size:1rem;color:var(--beige-med);letter-spacing:.1em}
+  .paq .por{font-size:.8rem;color:var(--beige-med);margin-bottom:6px}
+  .paq .nota{font-size:.82rem;color:#a3957e;min-height:1.4em;margin-bottom:22px}
+  .paq .btn{width:100%}
+  .pasos{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:56px}
+  @media(max-width:820px){.pasos{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:480px){.pasos{grid-template-columns:1fr}}
+  .paso{border-top:1px solid rgba(201,164,92,.35);padding-top:14px}
+  .paso .n{font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:var(--oro)}
+  .paso h4{font-family:'Jost',sans-serif;font-weight:500;letter-spacing:.18em;text-transform:uppercase;font-size:.7rem;color:var(--oro-claro);margin:4px 0 6px}
+  .paso p{font-size:.85rem;color:var(--beige-med)}
 
   /* ---------- CONTACTO ---------- */
-  #contacto .contact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;text-align:center}
-  @media(max-width:820px){#contacto .contact-grid{grid-template-columns:1fr}}
-  .c-item{border:1px solid rgba(201,164,92,.25);padding:36px 20px}
+  #contacto .contact-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;text-align:center}
+  @media(max-width:900px){#contacto .contact-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:520px){#contacto .contact-grid{grid-template-columns:1fr}}
+  .c-item{border:1px solid rgba(201,164,92,.25);padding:32px 18px}
   .c-item .ico{font-size:1.4rem;color:var(--oro-claro)}
-  .c-item h3{letter-spacing:.24em;text-transform:uppercase;font-size:.8rem;color:var(--oro);margin:12px 0 8px;font-family:'Jost',sans-serif;font-weight:500}
-  .c-item p{color:var(--beige-med);font-size:.95rem}
+  .c-item h3{letter-spacing:.24em;text-transform:uppercase;font-size:.78rem;color:var(--oro);margin:12px 0 8px;font-family:'Jost',sans-serif;font-weight:500}
+  .c-item p{color:var(--beige-med);font-size:.93rem}
   .c-item a{color:var(--oro-claro);border-bottom:1px solid rgba(201,164,92,.4);transition:.2s}
   .c-item a:hover{color:var(--crema);border-color:var(--crema)}
+  .redes{display:flex;flex-direction:column;gap:10px;align-items:center;margin-top:4px}
+  .red{
+    display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(201,164,92,.5)!important;
+    padding:8px 18px;letter-spacing:.2em;text-transform:uppercase;font-size:.68rem;transition:.2s;
+  }
+  .red:hover{background:var(--oro);color:var(--negro)!important;border-color:var(--oro)!important}
   .mapa{margin-top:22px;border:1px solid rgba(201,164,92,.25)}
   .mapa iframe{display:block}
 
   footer{border-top:1px solid rgba(201,164,92,.18);padding:34px 0;text-align:center}
   footer .f-brand{letter-spacing:.4em;color:var(--oro-claro);font-family:'Cormorant Garamond',serif;font-size:1.1rem}
   footer p{font-size:.72rem;color:#7d715f;margin-top:8px;letter-spacing:.08em}
+  footer .f-redes{display:flex;gap:18px;justify-content:center;margin-top:14px;font-size:.7rem;letter-spacing:.22em;text-transform:uppercase}
+  footer .f-redes a{color:var(--oro);opacity:.8}
+  footer .f-redes a:hover{opacity:1;color:var(--oro-claro)}
   footer .admin-link{opacity:.45;font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;margin-top:14px;display:inline-block;cursor:pointer}
   footer .admin-link:hover{opacity:1;color:var(--oro-claro)}
 
@@ -216,11 +277,12 @@
     display:flex;align-items:center;justify-content:center;z-index:100;padding:20px;
   }
   .modal{
-    background:var(--crema);color:var(--tinta);max-width:440px;width:100%;
+    background:var(--crema);color:var(--tinta);max-width:460px;width:100%;
     padding:36px 32px;position:relative;border-top:3px solid var(--oro);
-    max-height:90vh;overflow-y:auto;
+    max-height:92vh;overflow-y:auto;
   }
-  .modal.wide{max-width:720px}
+  @media(max-width:480px){.modal{padding:30px 20px}}
+  .modal.wide{max-width:820px}
   .modal .x{
     position:absolute;top:10px;right:14px;background:none;border:none;font-size:1.5rem;
     cursor:pointer;color:var(--tinta-suave);
@@ -228,41 +290,84 @@
   .modal h3{font-size:1.5rem;letter-spacing:.08em;margin-bottom:4px}
   .modal .sub{font-size:.85rem;color:var(--tinta-suave);margin-bottom:22px}
   .modal label{display:block;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--tinta-suave);margin:16px 0 6px}
-  .modal input{
+  .modal input,.modal select,.modal textarea{
     width:100%;padding:12px 14px;border:1px solid var(--beige-med);background:var(--blanco);
     font-family:'Jost',sans-serif;font-size:1rem;color:var(--tinta);
   }
-  .modal input:focus{outline:none;border-color:var(--oro-suave)}
-  .modal .btn{width:100%;margin-top:26px}
+  .modal input:focus,.modal select:focus,.modal textarea:focus{outline:none;border-color:var(--oro-suave)}
+  .modal .btn.full{width:100%;margin-top:22px}
   .msg{margin-top:14px;font-size:.85rem;display:none;padding:10px 12px}
   .msg.err{display:block;background:#f6e4e0;color:var(--error)}
   .msg.ok{display:block;background:#e4eee6;color:var(--ok)}
+  .msg.info{display:block;background:#f3ead6;color:var(--aviso)}
   .resumen{
     background:var(--blanco);border:1px solid var(--beige-med);padding:14px 16px;margin-top:6px;
-    display:flex;justify-content:space-between;align-items:center;gap:10px;
+    display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;
   }
   .resumen .fecha{font-family:'Cormorant Garamond',serif;font-size:1.15rem}
   .resumen .hora{letter-spacing:.1em;color:var(--oro-suave);font-weight:500}
-  .fine{font-size:.72rem;color:var(--tinta-suave);margin-top:14px;line-height:1.5}
+  .fine{font-size:.74rem;color:var(--tinta-suave);margin-top:14px;line-height:1.5}
+  .acciones{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
+  .acciones .btn{flex:1;min-width:140px}
 
   /* confirmación */
   .conf-star{font-size:2.2rem;color:var(--oro-suave);text-align:center;margin-bottom:10px}
   .conf-center{text-align:center}
 
-  /* admin */
-  .adm-day{display:flex;gap:10px;align-items:center;margin:14px 0 20px;flex-wrap:wrap}
-  .adm-day input{flex:1;min-width:170px}
-  .adm-tabla{width:100%;border-collapse:collapse;font-size:.9rem}
-  .adm-tabla th{
-    text-align:left;letter-spacing:.16em;text-transform:uppercase;font-size:.68rem;
-    color:var(--tinta-suave);border-bottom:2px solid var(--beige-med);padding:8px 10px;
+  /* pago */
+  .pago-bloque{background:var(--blanco);border:1px solid var(--beige-med);padding:16px 18px;margin-top:14px}
+  .pago-bloque h4{font-family:'Jost',sans-serif;font-weight:500;letter-spacing:.2em;text-transform:uppercase;font-size:.68rem;color:var(--oro-suave);margin-bottom:8px}
+  .dato{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 0;border-bottom:1px dashed var(--beige);font-size:.9rem}
+  .dato:last-child{border-bottom:none}
+  .dato b{font-weight:500;color:var(--tinta)}
+  .dato .v{font-family:ui-monospace,Menlo,monospace;font-size:.88rem;letter-spacing:.04em;text-align:right;word-break:break-all}
+  .copiar{background:none;border:1px solid var(--beige-med);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;padding:4px 8px;cursor:pointer;color:var(--tinta-suave);white-space:nowrap}
+  .copiar:hover{border-color:var(--oro-suave);color:var(--oro-suave)}
+  .ref-grande{font-family:'Cormorant Garamond',serif;font-size:2rem;letter-spacing:.2em;color:var(--oro-suave);text-align:center;margin:6px 0}
+
+  /* mi cuenta */
+  .cuenta-top{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:8px}
+  .saldo-box{text-align:center;border:1px solid var(--beige-med);background:var(--blanco);padding:14px 26px;min-width:150px}
+  .saldo-box .n{font-family:'Cormorant Garamond',serif;font-size:2.8rem;line-height:1;color:var(--oro-suave)}
+  .saldo-box .l{font-size:.64rem;letter-spacing:.22em;text-transform:uppercase;color:var(--tinta-suave)}
+  .lista{margin-top:10px}
+  .item{
+    display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;
+    border-bottom:1px solid var(--beige);flex-wrap:wrap;
   }
-  .adm-tabla td{border-bottom:1px solid var(--beige);padding:9px 10px;vertical-align:top}
+  .item .t{font-size:.95rem}
+  .item .t small{display:block;font-size:.74rem;color:var(--tinta-suave)}
+  .chip{display:inline-block;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;padding:3px 9px;border-radius:999px;background:var(--beige);color:var(--tinta-suave)}
+  .chip.ok{background:#e4eee6;color:var(--ok)}
+  .chip.pend{background:#f3ead6;color:var(--aviso)}
+  .chip.bad{background:#f6e4e0;color:var(--error)}
+  .vacio{color:#b9ad99;font-size:.88rem;padding:10px 0}
+  h4.sec{font-family:'Jost',sans-serif;font-weight:500;letter-spacing:.22em;text-transform:uppercase;font-size:.7rem;color:var(--oro-suave);margin:26px 0 4px}
+
+  /* admin */
+  .tabs{display:flex;gap:6px;border-bottom:1px solid var(--beige-med);margin:14px 0 18px;flex-wrap:wrap}
+  .tab{background:none;border:none;border-bottom:2px solid transparent;padding:10px 14px;cursor:pointer;
+    letter-spacing:.18em;text-transform:uppercase;font-size:.68rem;color:var(--tinta-suave);margin-bottom:-1px}
+  .tab.on{color:var(--oro-suave);border-bottom-color:var(--oro-suave)}
+  .adm-day{display:flex;gap:10px;align-items:center;margin:4px 0 18px;flex-wrap:wrap}
+  .adm-day input{flex:1;min-width:170px}
+  .adm-tabla{width:100%;border-collapse:collapse;font-size:.88rem}
+  .adm-tabla th{
+    text-align:left;letter-spacing:.16em;text-transform:uppercase;font-size:.66rem;
+    color:var(--tinta-suave);border-bottom:2px solid var(--beige-med);padding:8px 8px;
+  }
+  .adm-tabla td{border-bottom:1px solid var(--beige);padding:9px 8px;vertical-align:top}
   .adm-tabla td.h{white-space:nowrap;color:var(--oro-suave);font-weight:500}
   .adm-vacio{color:#b9ad99}
   .adm-bar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px}
   .adm-bar .who{font-size:.78rem;color:var(--tinta-suave)}
-  .linklike{background:none;border:none;color:var(--oro-suave);cursor:pointer;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;font-family:'Jost',sans-serif}
+  .linklike{background:none;border:none;color:var(--oro-suave);cursor:pointer;font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;font-family:'Jost',sans-serif;padding:0}
+  .linklike.rojo{color:var(--error)}
+  .mini-form{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px}
+  .mini-form input,.mini-form select{width:auto;flex:1;min-width:110px;padding:8px 10px;font-size:.9rem}
+  .tabla-scroll{overflow-x:auto}
+  .buscar{margin-bottom:12px}
+  .demo-banner{position:fixed;bottom:0;left:0;right:0;z-index:60;background:var(--aviso);color:#fff;text-align:center;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;padding:6px}
   [hidden]{display:none!important}
 </style>
 </head>
@@ -275,9 +380,13 @@
       <a href="#que-es">¿Qué es barre?</a>
       <a href="#valores">Filosofía</a>
       <a href="#calendario">Calendario</a>
+      <a href="#paquetes">Paquetes</a>
       <a href="#contacto">Contacto</a>
     </div>
-    <a href="#calendario" class="btn solid">Aparta tu clase</a>
+    <div class="nav-right">
+      <button class="btn small" id="nav-admin" type="button" hidden>Panel</button>
+      <button class="btn solid btn-cuenta" id="nav-cuenta" type="button">Entrar</button>
+    </div>
   </div>
 </nav>
 
@@ -288,7 +397,10 @@
     <p class="sub">B A R R E</p>
     <div class="glow-line" style="margin-top:30px"></div>
     <p class="lema">Tu mejor versión comienza aquí.</p>
-    <a href="#calendario" class="btn">Reserva tu lugar</a>
+    <div class="hero-btns">
+      <a href="#calendario" class="btn">Reserva tu lugar</a>
+      <a href="#paquetes" class="btn solid">Ver paquetes</a>
+    </div>
   </div>
 </header>
 
@@ -329,9 +441,7 @@
       <p class="eyebrow">Aparta tu lugar</p>
       <div class="divider"><span class="star">✦</span></div>
       <h2>Calendario de clases</h2>
-      <p style="color:var(--tinta-suave);margin-top:10px;font-size:.95rem">
-        Clases de 50 minutos · Lunes a viernes · 9:00 a. m. – 5:00 p. m.
-      </p>
+      <p class="intro" id="cal-horarios-txt">Clases de 50 minutos · Lunes a viernes</p>
     </div>
     <div class="cal-shell">
       <div class="cal-top">
@@ -341,19 +451,43 @@
           <button id="cal-next" aria-label="Semana siguiente">›</button>
         </div>
       </div>
-      <p class="cal-note">Elige un horario disponible y llena tus datos para apartar tu lugar.</p>
+      <p class="cal-note" id="cal-note">Elige un horario disponible. Necesitas clases en tu saldo para reservar; entra con tu cuenta de Google.</p>
       <div class="cal-scroll"><div id="cal-grid" class="cal-grid"></div></div>
       <div id="cal-cargando" class="cargando" hidden>Cargando disponibilidad…</div>
       <div class="cal-leyenda">
         <span><i class="dot d1"></i>Disponible</span>
+        <span><i class="dot d4"></i>Tu lugar</span>
         <span><i class="dot d2"></i>Lleno</span>
         <span><i class="dot d3"></i>No disponible</span>
       </div>
     </div>
+    <div class="reglas">
+      <div class="regla"><h4>Cupo</h4><p id="regla-cupo">Máximo 10 alumnas por clase. Llega 10 minutos antes.</p></div>
+      <div class="regla"><h4>Cancelaciones</h4><p>Puedes cancelar hasta las <strong>10:00 a. m. del día anterior</strong> a tu clase y la clase regresa a tu saldo para usarla después. Después de esa hora la clase se considera tomada.</p></div>
+      <div class="regla"><h4>Pago anticipado</h4><p>Las clases se pagan por adelantado. En cuanto confirmemos tu pago, aparecen en tu saldo y puedes reservar.</p></div>
+    </div>
   </div>
 </section>
 
-<section id="contacto" class="dark">
+<section id="paquetes" class="dark">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Paquetes y pagos</p>
+      <div class="divider"><span class="star">✦</span></div>
+      <h2>Elige tu paquete</h2>
+      <p class="intro">Compra tus clases, envíanos tu comprobante y reserva desde el calendario.</p>
+    </div>
+    <div class="paquetes" id="paquetes-grid"></div>
+    <div class="pasos">
+      <div class="paso"><div class="n">1</div><h4>Elige</h4><p>Selecciona un paquete y entra con tu cuenta de Google.</p></div>
+      <div class="paso"><div class="n">2</div><h4>Paga</h4><p>Por transferencia o Mercado Pago, con la referencia que te damos.</p></div>
+      <div class="paso"><div class="n">3</div><h4>Comprueba</h4><p>Mándanos tu comprobante por WhatsApp. Confirmamos y cargamos tu saldo.</p></div>
+      <div class="paso"><div class="n">4</div><h4>Reserva</h4><p>Aparta tus clases en el calendario. Cancela a tiempo y no pierdes la clase.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="contacto" class="dark" style="padding-top:0">
   <div class="wrap">
     <div class="sec-head">
       <p class="eyebrow">¿Dudas? Escríbenos</p>
@@ -361,13 +495,18 @@
       <h2>Contacto</h2>
     </div>
     <div class="contact-grid">
-      <div class="c-item"><div class="ico">✆</div><h3>Teléfono / WhatsApp</h3>
+      <div class="c-item"><div class="ico">✆</div><h3>WhatsApp</h3>
         <p>Ximena Barajas<br><a href="https://wa.me/524777974378" target="_blank" rel="noopener">+52 477 797 4378</a></p>
         <p style="margin-top:10px">Valeria Barajas<br><a href="https://wa.me/524792650920" target="_blank" rel="noopener">+52 479 265 0920</a></p></div>
       <div class="c-item"><div class="ico">✉</div><h3>Correo</h3><p><a href="mailto:elanbarre@gmail.com">elanbarre@gmail.com</a></p></div>
       <div class="c-item"><div class="ico">✦</div><h3>Estudio</h3>
         <p>Blvd. Algeciras #1402<br>esq. Puerto de Palos, Col. Arbide<br>León, Gto.</p>
-        <p style="margin-top:10px;font-size:.85rem;color:#a3957e">Lunes a viernes · 9:00 a. m. – 5:00 p. m.</p></div>
+        <p style="margin-top:10px;font-size:.85rem;color:#a3957e" id="contacto-horario">Lunes a viernes</p></div>
+      <div class="c-item"><div class="ico">◎</div><h3>Síguenos</h3>
+        <div class="redes">
+          <a class="red" id="lnk-ig" href="#" target="_blank" rel="noopener">Instagram ↗</a>
+          <a class="red" id="lnk-fb" href="#" target="_blank" rel="noopener">Facebook ↗</a>
+        </div></div>
     </div>
     <div class="mapa">
       <iframe src="https://www.google.com/maps?q=Boulevard%20Algeciras%201402%2C%20Arbide%2C%20Le%C3%B3n%2C%20Guanajuato&output=embed"
@@ -380,28 +519,89 @@
 <footer>
   <div class="f-brand">ELAN BARRE</div>
   <p>© <span id="anio"></span> Elan Barre · Tu mejor versión comienza aquí.</p>
+  <div class="f-redes">
+    <a id="lnk-ig2" href="#" target="_blank" rel="noopener">Instagram</a>
+    <a id="lnk-fb2" href="#" target="_blank" rel="noopener">Facebook</a>
+    <a id="lnk-wa2" href="#" target="_blank" rel="noopener">WhatsApp</a>
+  </div>
   <span class="admin-link" id="abrir-admin">Acceso administrador</span>
 </footer>
 
-<!-- MODAL RESERVA -->
+<div class="demo-banner" id="demo-banner" hidden>Modo demostración · nada se guarda</div>
+
+<!-- MODAL LOGIN -->
+<div class="modal-bg" id="m-login" hidden>
+  <div class="modal">
+    <button class="x" data-cierra="m-login">×</button>
+    <h3>Entra a tu cuenta</h3>
+    <p class="sub" id="l-sub">Con tu cuenta de Google ves tu saldo de clases, reservas y cancelas.</p>
+    <button class="btn solid full" type="button" id="l-google">Continuar con Google</button>
+    <div class="msg" id="l-msg"></div>
+    <p class="fine">Solo usamos tu nombre y correo para identificar tus clases. En el calendario público nunca se muestra tu nombre.</p>
+  </div>
+</div>
+
+<!-- MODAL PERFIL (teléfono) -->
+<div class="modal-bg" id="m-perfil" hidden>
+  <div class="modal">
+    <button class="x" data-cierra="m-perfil">×</button>
+    <h3>Completa tu perfil</h3>
+    <p class="sub">Un teléfono para avisarte de cualquier cambio en tu clase.</p>
+    <form id="f-perfil">
+      <label for="p-nombre">Nombre completo</label>
+      <input id="p-nombre" type="text" required maxlength="60" autocomplete="name" placeholder="Tu nombre">
+      <label for="p-tel">Teléfono / WhatsApp (10 dígitos)</label>
+      <input id="p-tel" type="tel" required pattern="[0-9]{10}" maxlength="10" inputmode="numeric" autocomplete="tel" placeholder="4771234567">
+      <button class="btn solid full" type="submit" id="p-btn">Guardar</button>
+      <div class="msg" id="p-msg"></div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL CONFIRMAR RESERVA -->
 <div class="modal-bg" id="m-reserva" hidden>
   <div class="modal">
     <button class="x" data-cierra="m-reserva">×</button>
-    <h3>Aparta tu clase</h3>
+    <h3>Confirma tu reserva</h3>
     <p class="sub">Clase de 50 minutos. Llega 10 minutos antes.</p>
     <div class="resumen">
       <span class="fecha" id="r-fecha">—</span>
       <span class="hora" id="r-hora">—</span>
     </div>
-    <form id="f-reserva">
-      <label for="r-nombre">Nombre completo</label>
-      <input id="r-nombre" type="text" required maxlength="60" autocomplete="name" placeholder="Tu nombre">
-      <label for="r-tel">Teléfono (10 dígitos)</label>
-      <input id="r-tel" type="tel" required pattern="[0-9]{10}" maxlength="10" inputmode="numeric" autocomplete="tel" placeholder="4771234567">
-      <button class="btn solid" type="submit" id="r-btn">Confirmar reserva</button>
-      <div class="msg" id="r-msg"></div>
-      <p class="fine">Tus datos solo se usan para confirmar tu clase. En el calendario público únicamente se muestra que el horario está ocupado, nunca tu nombre.</p>
-    </form>
+    <p class="fine" id="r-saldo-txt"></p>
+    <p class="fine" id="r-limite-txt"></p>
+    <button class="btn solid full" type="button" id="r-btn">Reservar (usa 1 clase)</button>
+    <div class="msg" id="r-msg"></div>
+  </div>
+</div>
+
+<!-- MODAL SIN SALDO -->
+<div class="modal-bg" id="m-sinsaldo" hidden>
+  <div class="modal conf-center">
+    <button class="x" data-cierra="m-sinsaldo">×</button>
+    <div class="conf-star">✦</div>
+    <h3>Necesitas clases en tu saldo</h3>
+    <p class="sub" style="margin-top:10px" id="ss-txt">Compra un paquete y, en cuanto confirmemos tu pago, podrás reservar este horario.</p>
+    <a class="btn solid" href="#paquetes" data-cierra="m-sinsaldo" style="width:auto">Ver paquetes</a>
+  </div>
+</div>
+
+<!-- MODAL CANCELAR -->
+<div class="modal-bg" id="m-cancelar" hidden>
+  <div class="modal">
+    <button class="x" data-cierra="m-cancelar">×</button>
+    <h3>Tu reserva</h3>
+    <p class="sub">Esta clase ya está apartada a tu nombre.</p>
+    <div class="resumen">
+      <span class="fecha" id="c-fecha">—</span>
+      <span class="hora" id="c-hora">—</span>
+    </div>
+    <p class="fine" id="c-txt"></p>
+    <div class="acciones">
+      <button class="btn" type="button" data-cierra="m-cancelar">Conservar</button>
+      <button class="btn peligro" type="button" id="c-btn">Cancelar reserva</button>
+    </div>
+    <div class="msg" id="c-msg"></div>
   </div>
 </div>
 
@@ -410,21 +610,57 @@
   <div class="modal conf-center">
     <button class="x" data-cierra="m-conf">×</button>
     <div class="conf-star">✦</div>
-    <h3>¡Lugar apartado!</h3>
+    <h3 id="conf-tit">¡Lugar apartado!</h3>
     <p class="sub" id="conf-txt" style="margin-top:10px">Te esperamos.</p>
     <button class="btn" data-cierra="m-conf" style="width:auto">Listo</button>
   </div>
 </div>
 
-<!-- MODAL ADMIN LOGIN -->
-<div class="modal-bg" id="m-login" hidden>
+<!-- MODAL PAGO -->
+<div class="modal-bg" id="m-pago" hidden>
   <div class="modal">
-    <button class="x" data-cierra="m-login">×</button>
-    <h3>Acceso administrador</h3>
-    <p class="sub">Solo personal de Elan Barre.</p>
-    <button class="btn solid" type="button" id="l-google">Entrar con Google</button>
-    <div class="msg" id="l-msg"></div>
-    <p class="fine">Inicia sesión con la cuenta de Google del estudio. Solo las cuentas autorizadas pueden ver las inscripciones.</p>
+    <button class="x" data-cierra="m-pago">×</button>
+    <h3>Completa tu pago</h3>
+    <p class="sub" id="pg-sub">—</p>
+    <div class="pago-bloque" style="text-align:center">
+      <h4>Tu referencia de pago</h4>
+      <div class="ref-grande" id="pg-ref">—</div>
+      <p class="fine" style="margin-top:0">Escríbela en el concepto de tu transferencia o mándala junto con tu comprobante.</p>
+    </div>
+    <div id="pg-transfer"></div>
+    <div id="pg-mp"></div>
+    <div class="pago-bloque">
+      <h4>Envía tu comprobante</h4>
+      <p class="fine" style="margin:0 0 10px">Mándanos la captura de tu pago por WhatsApp. En cuanto lo confirmemos, tus clases aparecen en tu saldo.</p>
+      <a class="btn solid" id="pg-wa" href="#" target="_blank" rel="noopener" style="width:100%">Enviar comprobante por WhatsApp</a>
+    </div>
+    <p class="fine">Tu compra queda registrada como <strong>pendiente de pago</strong> en “Mi cuenta”. Si necesitas ayuda, escríbenos.</p>
+  </div>
+</div>
+
+<!-- MODAL MI CUENTA -->
+<div class="modal-bg" id="m-cuenta" hidden>
+  <div class="modal wide">
+    <button class="x" data-cierra="m-cuenta">×</button>
+    <div class="cuenta-top">
+      <div>
+        <h3>Mi cuenta</h3>
+        <p class="sub" style="margin-bottom:0" id="cu-who">—</p>
+      </div>
+      <div class="saldo-box"><div class="n" id="cu-saldo">0</div><div class="l">clases disponibles</div></div>
+    </div>
+    <div class="acciones" style="margin-top:14px">
+      <a class="btn solid" href="#paquetes" data-cierra="m-cuenta">Comprar clases</a>
+      <a class="btn" href="#calendario" data-cierra="m-cuenta">Ir al calendario</a>
+    </div>
+    <h4 class="sec">Próximas clases</h4>
+    <div class="lista" id="cu-reservas"><div class="vacio">Cargando…</div></div>
+    <h4 class="sec">Mis compras</h4>
+    <div class="lista" id="cu-compras"><div class="vacio">Cargando…</div></div>
+    <div class="acciones" style="justify-content:space-between;margin-top:26px">
+      <button class="linklike" type="button" id="cu-editar">Editar mis datos</button>
+      <button class="linklike" type="button" id="cu-salir">Cerrar sesión</button>
+    </div>
   </div>
 </div>
 
@@ -433,15 +669,37 @@
   <div class="modal wide">
     <button class="x" data-cierra="m-admin">×</button>
     <div class="adm-bar">
-      <h3>Inscripciones</h3>
+      <h3>Panel Elan Barre</h3>
       <div><span class="who" id="adm-who"></span> · <button class="linklike" id="adm-salir">Salir</button></div>
     </div>
-    <p class="sub">Selecciona un día para ver quién apartó cada horario.</p>
-    <div class="adm-day">
-      <input type="date" id="adm-fecha">
-      <button class="btn" style="width:auto;margin:0;padding:11px 20px" id="adm-ver">Ver día</button>
+    <div class="tabs">
+      <button class="tab on" data-tab="pagos">Pagos <span id="adm-npend"></span></button>
+      <button class="tab" data-tab="clases">Clases del día</button>
+      <button class="tab" data-tab="clientas">Clientas</button>
     </div>
-    <div id="adm-out"></div>
+
+    <div id="tab-pagos">
+      <p class="sub">Compras pendientes de confirmar. Revisa el comprobante en WhatsApp y confirma: el saldo se carga automáticamente.</p>
+      <div id="adm-pagos"></div>
+      <h4 class="sec">Últimos pagos confirmados</h4>
+      <div id="adm-pagados"></div>
+    </div>
+
+    <div id="tab-clases" hidden>
+      <p class="sub">Selecciona un día para ver quién apartó cada horario.</p>
+      <div class="adm-day">
+        <input type="date" id="adm-fecha">
+        <button class="btn small" style="margin:0" id="adm-ver">Ver día</button>
+      </div>
+      <div id="adm-out"></div>
+    </div>
+
+    <div id="tab-clientas" hidden>
+      <p class="sub">Saldo por clienta, ajustes manuales y pagos en efectivo.</p>
+      <input type="text" class="buscar" id="adm-buscar" placeholder="Buscar por nombre, teléfono o correo…">
+      <div id="adm-clientas"></div>
+    </div>
+    <div class="msg" id="adm-msg"></div>
   </div>
 </div>
 
@@ -449,16 +707,45 @@
 /* ================== CONFIGURACIÓN ==================
    Cambia aquí los datos del estudio sin tocar el resto. */
 const CONFIG = {
-  cupoPorClase: 8,            // PENDIENTE: confirmar cupo real por clase
-  horas: [9, 10, 11, 12, 14, 15, 16],   // sin clase de 13:00; última 16:00–16:50
-  diasHabiles: [1, 2, 3, 4, 5],          // lunes a viernes
-  semanasFuturas: 4,          // cuántas semanas adelante se puede reservar
-  telefono: "+52 477 797 4378",   // Ximena Barajas (principal); Valeria Barajas +52 479 265 0920
+  cupoPorClase: 10,
+  horarios: [                       // clases de 50 min
+    { h: 6,  m: 20 },
+    { h: 7,  m: 20 },
+    { h: 8,  m: 20 },
+    { h: 19, m: 15 },
+    { h: 20, m: 15 },
+  ],
+  duracionMin: 50,
+  diasHabiles: [1, 2, 3, 4, 5],     // lunes a viernes
+  semanasFuturas: 4,                // cuántas semanas adelante se puede reservar
+  cancelHoraLimite: 10,             // se puede cancelar hasta las 10:00 del día anterior
+  utcOffsetHoras: 6,                // León, Gto. = UTC-6 todo el año (sin horario de verano)
+  whatsapp: "524777974378",         // Ximena Barajas (principal)
+  telefono: "+52 477 797 4378",
   correo: "elanbarre@gmail.com",
+  instagram: "https://www.instagram.com/elanbarre",
+  facebook: "https://www.facebook.com/share/19TyVPiza9/",
 };
 
-/* Config de Firebase del proyecto elan-barre.
-   Si se pone en null, la página corre en MODO DEMO (los datos no se guardan). */
+/* Paquetes a la venta. Agrega renglones para las promociones. */
+const PAQUETES = [
+  { id: "clase-1", nombre: "1 clase", clases: 1, precio: 160, nota: "Clase suelta", destacado: false, mercadoPago: "" },
+  // Ejemplo de promoción:
+  // { id: "paq-4", nombre: "4 clases", clases: 4, precio: 560, nota: "$140 por clase", destacado: true, mercadoPago: "https://mpago.la/xxxx" },
+];
+
+/* Datos para recibir pagos. Mientras estén en null, la página pide los datos por WhatsApp. */
+const PAGO = {
+  transferencia: {
+    banco: null,        // p. ej. "BBVA"
+    titular: null,      // p. ej. "Ximena Barajas"
+    clabe: null,        // 18 dígitos
+    tarjeta: null,      // opcional: número de tarjeta para depósito
+  },
+};
+
+/* Config de Firebase del proyecto elan-barre. Si se pone en null (o se abre la
+   página con ?demo) corre en MODO DEMO: nada se guarda. */
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyC9jHwidsxCmMAoKMwft6Rd3xOY0-groS0",
   authDomain: "elan-barre.firebaseapp.com",
@@ -472,65 +759,165 @@ const FIREBASE_CONFIG = {
    reglas de seguridad de Firestore). */
 const ADMINS = ["elanbarre@gmail.com", "rascenciobaker@gmail.com"];
 
-/* ================== UTILIDADES DE FECHA ================== */
+/* ================== UTILIDADES ================== */
 const MESES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
 const DOWS = ["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
-const fmtISO = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
-const fmtHora = h => {
+const DOWS_L = ["domingo","lunes","martes","miércoles","jueves","viernes","sábado"];
+const $ = id => document.getElementById(id);
+const pad2 = n => String(n).padStart(2, "0");
+const fmtISO = d => `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+const keyHora = ho => `${pad2(ho.h)}${pad2(ho.m)}`;                 // "0620"
+const horaTxt = ho => `${pad2(ho.h)}:${pad2(ho.m)}`;                // "06:20"
+const horarioDeKey = k => CONFIG.horarios.find(ho => keyHora(ho) === k);
+function fmt12(h, m){
   const ampm = h < 12 ? "a. m." : "p. m.";
   const h12 = h % 12 === 0 ? 12 : h % 12;
-  return `${h12}:00 ${ampm}`;
-};
+  return `${h12}:${pad2(m)} ${ampm}`;
+}
+const fmtHorario = ho => fmt12(ho.h, ho.m);
+function fmtRango(ho){
+  const fin = new Date(2000, 0, 1, ho.h, ho.m + CONFIG.duracionMin);
+  return `${fmt12(ho.h, ho.m)} – ${fmt12(fin.getHours(), fin.getMinutes())}`;
+}
 const fmtHumana = d => `${DOWS[d.getDay()]} ${d.getDate()} de ${MESES[d.getMonth()]}`;
+const fmtHumanaL = d => `${DOWS_L[d.getDay()]} ${d.getDate()} de ${MESES[d.getMonth()]}`;
+const fechaDeISO = iso => { const [y, m, d] = iso.split("-").map(Number); return new Date(y, m - 1, d); };
+const dinero = n => "$" + Number(n).toLocaleString("es-MX", { minimumFractionDigits: 0 });
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
 function lunesDe(base){
   const d = new Date(base.getFullYear(), base.getMonth(), base.getDate());
   const day = d.getDay();
   d.setDate(d.getDate() - (day === 0 ? 6 : day - 1));
   return d;
 }
+/* Instantes en hora de León (UTC-6) independientemente del reloj del dispositivo. */
+function inicioClase(iso, ho){
+  const [y, m, d] = iso.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d, ho.h + CONFIG.utcOffsetHoras, ho.m));
+}
+function limiteCancelacion(iso){
+  const [y, m, d] = iso.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d - 1, CONFIG.cancelHoraLimite + CONFIG.utcOffsetHoras, 0));
+}
+function fmtLimite(iso){
+  const [y, m, d] = iso.split("-").map(Number);
+  const dia = new Date(y, m - 1, d - 1);
+  return `${fmtHumanaL(dia)} a las ${fmt12(CONFIG.cancelHoraLimite, 0)}`;
+}
+const puedeCancelar = iso => Date.now() < limiteCancelacion(iso).getTime();
+function refCorta(id){ return (id || "").replace(/[^A-Za-z0-9]/g, "").slice(-6).toUpperCase(); }
+const paqueteDe = id => PAQUETES.find(p => p.id === id);
 
 /* ================== BACKEND ================== */
-/* Interfaz: cargarCupos(fechasISO[]) -> {"fecha_hora": n}
-             reservar(fechaISO, hora, nombre, tel) -> {ok} | {error}
-             login(mail, pass) -> {ok, quien} | {error}
-             logout()
-             reservasDelDia(fechaISO) -> [{hora, nombre, telefono}] */
+/* Interfaz común (demo y Firebase):
+   onAuth(cb)                         cb({uid,email,nombre}|null)
+   login() / logout()
+   getCliente(uid) -> doc|null        guardarPerfil(user,{nombre,telefono})
+   cargarCupos(fechasISO[]) -> {"fecha_HHMM": n}
+   misReservas(uid) -> [reserva]      misCompras(uid) -> [compra]
+   reservar(user, iso, ho) -> {ok,saldo} | {error}
+   cancelar(user, reserva) -> {ok} | {error}
+   crearCompra(user, cliente, paquete) -> {ok, compra} | {error}
+   admin*: comprasPendientes, comprasRecientes, confirmarCompra, rechazarCompra,
+           reservasDelDia, cancelarReserva, clientes, ajustarSaldo, pagoEfectivo */
+
+const DEMO = !FIREBASE_CONFIG || new URLSearchParams(location.search).has("demo");
 
 function backendDemo(){
-  const mem = {};   // solo en memoria: se borra al recargar
-  let dentro = null;
+  const db = { clientes: {}, reservas: {}, compras: {}, cupos: {}, ajustes: [] };
+  let user = null, cb = null;
+  const admin = new URLSearchParams(location.search).get("demo") === "admin";
+  const ahora = () => new Date();
+  const emit = () => cb && cb(user);
   return {
     demo: true,
-    async cargarCupos(fechas){
-      const out = {};
-      for (const f of fechas) for (const h of CONFIG.horas){
-        const k = `${f}_${h}`;
-        out[k] = (mem[k] || []).length;
-      }
-      return out;
+    onAuth(f){ cb = f; setTimeout(emit, 0); },
+    async login(opts){
+      user = (admin || (opts && opts.admin))
+        ? { uid: "demo-admin", email: ADMINS[0], nombre: "Admin Demo" }
+        : { uid: "demo-cliente", email: "clienta@demo.mx", nombre: "Clienta Demo" };
+      emit();
+      return { ok: true, user };
     },
-    async reservar(f, h, nombre, tel){
-      const k = `${f}_${h}`;
-      mem[k] = mem[k] || [];
-      if (mem[k].length >= CONFIG.cupoPorClase) return { error: "lleno" };
-      mem[k].push({ hora: h, nombre, telefono: tel });
+    async logout(){ user = null; emit(); },
+    async getCliente(uid){ return db.clientes[uid] || null; },
+    async guardarPerfil(u, datos){
+      const c = db.clientes[u.uid] || { uid: u.uid, email: u.email, saldo: 0, creado: ahora() };
+      db.clientes[u.uid] = { ...c, ...datos, actualizado: ahora() };
       return { ok: true };
     },
-    async login(){
-      dentro = "demo@elanbarre.mx";
-      return { ok: true, quien: dentro };
-    },
-    async logout(){ dentro = null; },
-    async reservasDelDia(f){
-      const out = [];
-      for (const h of CONFIG.horas) for (const r of (mem[`${f}_${h}`] || [])) out.push(r);
+    async cargarCupos(fechas){
+      const out = {};
+      for (const f of fechas) for (const ho of CONFIG.horarios){ const k = `${f}_${keyHora(ho)}`; out[k] = db.cupos[k] || 0; }
       return out;
+    },
+    async misReservas(uid){ return Object.values(db.reservas).filter(r => r.uid === uid); },
+    async misCompras(uid){ return Object.values(db.compras).filter(c => c.uid === uid); },
+    async reservar(u, iso, ho){
+      const c = db.clientes[u.uid];
+      if (!c || c.saldo < 1) return { error: "sin_saldo" };
+      const k = `${iso}_${keyHora(ho)}`, rid = `${u.uid}_${k}`;
+      const prev = db.reservas[rid];
+      if (prev && prev.estado === "confirmada") return { error: "duplicada" };
+      if ((db.cupos[k] || 0) >= CONFIG.cupoPorClase) return { error: "lleno" };
+      db.cupos[k] = (db.cupos[k] || 0) + 1;
+      c.saldo -= 1;
+      db.reservas[rid] = { id: rid, uid: u.uid, nombre: c.nombre, telefono: c.telefono, email: u.email, fecha: iso, hora: horaTxt(ho), horaKey: keyHora(ho),
+        inicio: inicioClase(iso, ho), limiteCancelacion: limiteCancelacion(iso), estado: "confirmada", creado: ahora() };
+      return { ok: true, saldo: c.saldo };
+    },
+    async cancelar(u, r){
+      if (!puedeCancelar(r.fecha)) return { error: "fuera_de_tiempo" };
+      const k = `${r.fecha}_${r.horaKey}`;
+      db.reservas[r.id] = { ...r, estado: "cancelada", cancelada: ahora(), devuelta: true };
+      db.cupos[k] = Math.max(0, (db.cupos[k] || 0) - 1);
+      db.clientes[u.uid].saldo += 1;
+      return { ok: true };
+    },
+    async crearCompra(u, c, p){
+      const id = "demo" + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+      const compra = { id, ref: refCorta(id), uid: u.uid, nombre: c.nombre, telefono: c.telefono, email: u.email,
+        paqueteId: p.id, paqueteNombre: p.nombre, clases: p.clases, monto: p.precio, estado: "pendiente", creado: ahora() };
+      db.compras[id] = compra;
+      return { ok: true, compra };
+    },
+    /* admin */
+    async adminComprasPendientes(){ return Object.values(db.compras).filter(c => c.estado === "pendiente"); },
+    async adminComprasRecientes(){ return Object.values(db.compras).filter(c => c.estado !== "pendiente").slice(-20); },
+    async adminConfirmarCompra(c, quien){
+      db.compras[c.id] = { ...c, estado: "pagada", confirmada: ahora(), confirmadaPor: quien };
+      const cl = db.clientes[c.uid]; if (cl) cl.saldo += c.clases;
+      return { ok: true };
+    },
+    async adminRechazarCompra(c, quien){ db.compras[c.id] = { ...c, estado: "rechazada", confirmada: ahora(), confirmadaPor: quien }; return { ok: true }; },
+    async adminReservasDelDia(f){ return Object.values(db.reservas).filter(r => r.fecha === f); },
+    async adminCancelarReserva(r, devolver, quien){
+      const k = `${r.fecha}_${r.horaKey}`;
+      db.reservas[r.id] = { ...r, estado: "cancelada", cancelada: ahora(), canceladaPor: quien, devuelta: !!devolver };
+      db.cupos[k] = Math.max(0, (db.cupos[k] || 0) - 1);
+      if (devolver && db.clientes[r.uid]) db.clientes[r.uid].saldo += 1;
+      return { ok: true };
+    },
+    async adminClientes(){ return Object.values(db.clientes); },
+    async adminAjustarSaldo(uid, delta, motivo, quien){
+      const cl = db.clientes[uid]; if (!cl) return { error: "No existe la clienta." };
+      cl.saldo = Math.max(0, cl.saldo + delta);
+      db.ajustes.push({ uid, delta, motivo, quien, fecha: ahora() });
+      return { ok: true };
+    },
+    async adminPagoEfectivo(cl, p, quien){
+      const id = "efe" + Date.now().toString(36);
+      db.compras[id] = { id, ref: refCorta(id), uid: cl.uid, nombre: cl.nombre, telefono: cl.telefono, email: cl.email, paqueteId: p.id, paqueteNombre: p.nombre,
+        clases: p.clases, monto: p.precio, estado: "pagada", metodo: "efectivo", creado: ahora(), confirmada: ahora(), confirmadaPor: quien };
+      cl.saldo += p.clases;
+      return { ok: true };
     },
   };
 }
 
 function backendFirebase(cfg){
   let db, auth, mods = null;
+  const M_RES = 500;
   async function init(){
     if (mods) return mods;
     const [appM, fsM, authM] = await Promise.all([
@@ -544,95 +931,371 @@ function backendFirebase(cfg){
     mods = { fsM, authM };
     return mods;
   }
+  const toDate = v => (v && typeof v.toDate === "function") ? v.toDate() : (v ? new Date(v) : null);
+  const norm = (id, d) => ({ ...d, id, inicio: toDate(d.inicio), limiteCancelacion: toDate(d.limiteCancelacion), creado: toDate(d.creado), confirmada: toDate(d.confirmada), cancelada: toDate(d.cancelada) });
+  const userDe = u => u ? { uid: u.uid, email: (u.email || "").toLowerCase(), nombre: u.displayName || "" } : null;
+  const errorMsg = (e, def) => {
+    console.error(e);
+    const c = String(e && (e.code || e.message) || "");
+    if (c.includes("permission")) return "La operación no fue permitida (revisa las reglas o tu sesión).";
+    if (c.includes("network") || c.includes("unavailable")) return "Sin conexión. Intenta de nuevo.";
+    return def;
+  };
   return {
     demo: false,
+    onAuth(cb){ init().then(({ authM }) => authM.onAuthStateChanged(auth, u => cb(userDe(u)))); },
+    async login(){
+      const { authM } = await init();
+      try {
+        const prov = new authM.GoogleAuthProvider();
+        prov.setCustomParameters({ prompt: "select_account" });
+        const cred = await authM.signInWithPopup(auth, prov);
+        return { ok: true, user: userDe(cred.user) };
+      } catch (e){
+        if (String(e.code).includes("popup-closed")) return { error: "Se cerró la ventana de Google. Intenta de nuevo." };
+        if (String(e.code).includes("popup-blocked")) return { error: "Tu navegador bloqueó la ventana de Google. Permite ventanas emergentes e intenta de nuevo." };
+        return { error: errorMsg(e, "No se pudo iniciar sesión. Intenta de nuevo.") };
+      }
+    },
+    async logout(){ const { authM } = await init(); await authM.signOut(auth); },
+    async getCliente(uid){
+      const { fsM } = await init();
+      const s = await fsM.getDoc(fsM.doc(db, "clientes", uid));
+      return s.exists() ? norm(s.id, s.data()) : null;
+    },
+    async guardarPerfil(u, datos){
+      const { fsM } = await init();
+      const ref = fsM.doc(db, "clientes", u.uid);
+      try {
+        const s = await fsM.getDoc(ref);
+        if (s.exists()){
+          await fsM.updateDoc(ref, { nombre: datos.nombre, telefono: datos.telefono, email: u.email, actualizado: fsM.serverTimestamp() });
+        } else {
+          await fsM.setDoc(ref, { uid: u.uid, email: u.email, nombre: datos.nombre, telefono: datos.telefono, saldo: 0, creado: fsM.serverTimestamp(), actualizado: fsM.serverTimestamp() });
+        }
+        return { ok: true };
+      } catch (e){ return { error: errorMsg(e, "No se pudo guardar tu perfil.") }; }
+    },
     async cargarCupos(fechas){
       const { fsM } = await init();
       const out = {};
       const lecturas = [];
-      for (const f of fechas) for (const h of CONFIG.horas){
-        const k = `${f}_${h}`;
+      for (const f of fechas) for (const ho of CONFIG.horarios){
+        const k = `${f}_${keyHora(ho)}`;
         lecturas.push(fsM.getDoc(fsM.doc(db, "cupos", k)).then(s => { out[k] = s.exists() ? (s.data().n || 0) : 0; }));
       }
       await Promise.all(lecturas);
       return out;
     },
-    async reservar(f, h, nombre, tel){
+    async misReservas(uid){
       const { fsM } = await init();
-      const cupoRef = fsM.doc(db, "cupos", `${f}_${h}`);
-      const resRef = fsM.doc(fsM.collection(db, "reservas"));
+      const snap = await fsM.getDocs(fsM.query(fsM.collection(db, "reservas"), fsM.where("uid", "==", uid)));
+      const out = []; snap.forEach(d => out.push(norm(d.id, d.data()))); return out;
+    },
+    async misCompras(uid){
+      const { fsM } = await init();
+      const snap = await fsM.getDocs(fsM.query(fsM.collection(db, "compras"), fsM.where("uid", "==", uid)));
+      const out = []; snap.forEach(d => out.push(norm(d.id, d.data()))); return out;
+    },
+    async reservar(u, iso, ho){
+      const { fsM } = await init();
+      const k = `${iso}_${keyHora(ho)}`, rid = `${u.uid}_${k}`;
+      const cupoRef = fsM.doc(db, "cupos", k), resRef = fsM.doc(db, "reservas", rid), cliRef = fsM.doc(db, "clientes", u.uid);
+      try {
+        let saldoFinal = 0;
+        await fsM.runTransaction(db, async tx => {
+          const [cs, rs, cls] = await Promise.all([tx.get(cupoRef), tx.get(resRef), tx.get(cliRef)]);
+          const cli = cls.exists() ? cls.data() : null;
+          if (!cli || (cli.saldo || 0) < 1) throw new Error("sin_saldo");
+          if (rs.exists() && rs.data().estado === "confirmada") throw new Error("duplicada");
+          const n = cs.exists() ? (cs.data().n || 0) : 0;
+          if (n >= CONFIG.cupoPorClase) throw new Error("lleno");
+          saldoFinal = (cli.saldo || 0) - 1;
+          tx.set(cupoRef, { n: n + 1, fecha: iso, hora: horaTxt(ho) }, { merge: true });
+          tx.set(resRef, {
+            uid: u.uid, nombre: cli.nombre || u.nombre, telefono: cli.telefono || "", email: u.email,
+            fecha: iso, hora: horaTxt(ho), horaKey: keyHora(ho),
+            inicio: fsM.Timestamp.fromDate(inicioClase(iso, ho)),
+            limiteCancelacion: fsM.Timestamp.fromDate(limiteCancelacion(iso)),
+            estado: "confirmada", creado: fsM.serverTimestamp(), devuelta: false,
+          });
+          tx.update(cliRef, { saldo: saldoFinal, ultimaReserva: rid, actualizado: fsM.serverTimestamp() });
+        });
+        return { ok: true, saldo: saldoFinal };
+      } catch (e){
+        const m = String(e.message);
+        if (["sin_saldo", "duplicada", "lleno"].includes(m)) return { error: m };
+        return { error: errorMsg(e, "No se pudo guardar la reserva. Intenta de nuevo.") };
+      }
+    },
+    async cancelar(u, r){
+      const { fsM } = await init();
+      if (!puedeCancelar(r.fecha)) return { error: "fuera_de_tiempo" };
+      const k = `${r.fecha}_${r.horaKey}`;
+      const cupoRef = fsM.doc(db, "cupos", k), resRef = fsM.doc(db, "reservas", r.id), cliRef = fsM.doc(db, "clientes", u.uid);
       try {
         await fsM.runTransaction(db, async tx => {
-          const s = await tx.get(cupoRef);
-          const n = s.exists() ? (s.data().n || 0) : 0;
-          if (n >= CONFIG.cupoPorClase) throw new Error("lleno");
-          tx.set(cupoRef, { n: n + 1, fecha: f, hora: h }, { merge: true });
-          tx.set(resRef, { fecha: f, hora: h, nombre, telefono: tel, creado: fsM.serverTimestamp() });
+          const [cs, rs, cls] = await Promise.all([tx.get(cupoRef), tx.get(resRef), tx.get(cliRef)]);
+          if (!rs.exists() || rs.data().estado !== "confirmada") throw new Error("no_confirmada");
+          const n = cs.exists() ? (cs.data().n || 0) : 0;
+          tx.update(resRef, { estado: "cancelada", cancelada: fsM.serverTimestamp(), devuelta: true });
+          tx.set(cupoRef, { n: Math.max(0, n - 1), fecha: r.fecha, hora: r.hora }, { merge: true });
+          tx.update(cliRef, { saldo: (cls.data().saldo || 0) + 1, ultimaCancelacion: r.id, actualizado: fsM.serverTimestamp() });
         });
         return { ok: true };
       } catch (e){
-        if (String(e.message).includes("lleno")) return { error: "lleno" };
-        console.error(e);
-        return { error: "No se pudo guardar la reserva. Intenta de nuevo." };
+        if (String(e.message) === "no_confirmada") return { error: "Esta reserva ya no está activa." };
+        return { error: errorMsg(e, "No se pudo cancelar. Intenta de nuevo.") };
       }
     },
-    async login(){
-      const { authM } = await init();
-      try {
-        const prov = new authM.GoogleAuthProvider();
-        const cred = await authM.signInWithPopup(auth, prov);
-        const mail = (cred.user.email || "").toLowerCase();
-        if (!ADMINS.includes(mail)){
-          await authM.signOut(auth);
-          return { error: "Esta cuenta no tiene acceso al panel." };
-        }
-        return { ok: true, quien: mail };
-      } catch (e){
-        if (String(e.code).includes("popup-closed")) return { error: "Se cerró la ventana de Google. Intenta de nuevo." };
-        console.error(e);
-        return { error: "No se pudo iniciar sesión. Intenta de nuevo." };
-      }
-    },
-    async logout(){
-      const { authM } = await init();
-      await authM.signOut(auth);
-    },
-    async reservasDelDia(f){
+    async crearCompra(u, c, p){
       const { fsM } = await init();
-      const q = fsM.query(fsM.collection(db, "reservas"), fsM.where("fecha", "==", f));
-      const snap = await fsM.getDocs(q);
-      const out = [];
-      snap.forEach(d => out.push(d.data()));
-      return out;
+      const ref = fsM.doc(fsM.collection(db, "compras"));
+      const compra = { ref: refCorta(ref.id), uid: u.uid, nombre: c.nombre, telefono: c.telefono, email: u.email,
+        paqueteId: p.id, paqueteNombre: p.nombre, clases: p.clases, monto: p.precio, estado: "pendiente", creado: fsM.serverTimestamp() };
+      try { await fsM.setDoc(ref, compra); return { ok: true, compra: { ...compra, id: ref.id, creado: new Date() } }; }
+      catch (e){ return { error: errorMsg(e, "No se pudo registrar la compra.") }; }
+    },
+    /* ---- admin ---- */
+    async adminComprasPendientes(){
+      const { fsM } = await init();
+      const snap = await fsM.getDocs(fsM.query(fsM.collection(db, "compras"), fsM.where("estado", "==", "pendiente")));
+      const out = []; snap.forEach(d => out.push(norm(d.id, d.data()))); return out;
+    },
+    async adminComprasRecientes(){
+      const { fsM } = await init();
+      const snap = await fsM.getDocs(fsM.query(fsM.collection(db, "compras"), fsM.where("estado", "in", ["pagada", "rechazada"])));
+      const out = []; snap.forEach(d => out.push(norm(d.id, d.data())));
+      out.sort((a, b) => (b.confirmada || b.creado || 0) - (a.confirmada || a.creado || 0));
+      return out.slice(0, 20);
+    },
+    async adminConfirmarCompra(c, quien){
+      const { fsM } = await init();
+      const comRef = fsM.doc(db, "compras", c.id), cliRef = fsM.doc(db, "clientes", c.uid);
+      try {
+        await fsM.runTransaction(db, async tx => {
+          const [cs, cl] = await Promise.all([tx.get(comRef), tx.get(cliRef)]);
+          if (!cs.exists() || cs.data().estado !== "pendiente") throw new Error("ya_procesada");
+          if (!cl.exists()) throw new Error("sin_cliente");
+          tx.update(comRef, { estado: "pagada", confirmada: fsM.serverTimestamp(), confirmadaPor: quien });
+          tx.update(cliRef, { saldo: (cl.data().saldo || 0) + (cs.data().clases || 0), actualizado: fsM.serverTimestamp() });
+        });
+        return { ok: true };
+      } catch (e){
+        if (String(e.message) === "ya_procesada") return { error: "Esta compra ya fue procesada." };
+        if (String(e.message) === "sin_cliente") return { error: "La clienta no tiene perfil; pídele que entre a la página y complete sus datos." };
+        return { error: errorMsg(e, "No se pudo confirmar.") };
+      }
+    },
+    async adminRechazarCompra(c, quien){
+      const { fsM } = await init();
+      try { await fsM.updateDoc(fsM.doc(db, "compras", c.id), { estado: "rechazada", confirmada: fsM.serverTimestamp(), confirmadaPor: quien }); return { ok: true }; }
+      catch (e){ return { error: errorMsg(e, "No se pudo rechazar.") }; }
+    },
+    async adminReservasDelDia(f){
+      const { fsM } = await init();
+      const snap = await fsM.getDocs(fsM.query(fsM.collection(db, "reservas"), fsM.where("fecha", "==", f)));
+      const out = []; snap.forEach(d => out.push(norm(d.id, d.data()))); return out;
+    },
+    async adminCancelarReserva(r, devolver, quien){
+      const { fsM } = await init();
+      const k = `${r.fecha}_${r.horaKey}`;
+      const cupoRef = fsM.doc(db, "cupos", k), resRef = fsM.doc(db, "reservas", r.id), cliRef = fsM.doc(db, "clientes", r.uid);
+      try {
+        await fsM.runTransaction(db, async tx => {
+          const [cs, rs, cls] = await Promise.all([tx.get(cupoRef), tx.get(resRef), tx.get(cliRef)]);
+          if (!rs.exists() || rs.data().estado !== "confirmada") throw new Error("no_confirmada");
+          const n = cs.exists() ? (cs.data().n || 0) : 0;
+          tx.update(resRef, { estado: "cancelada", cancelada: fsM.serverTimestamp(), canceladaPor: quien, devuelta: !!devolver });
+          tx.set(cupoRef, { n: Math.max(0, n - 1), fecha: r.fecha, hora: r.hora }, { merge: true });
+          if (devolver && cls.exists()) tx.update(cliRef, { saldo: (cls.data().saldo || 0) + 1, actualizado: fsM.serverTimestamp() });
+        });
+        return { ok: true };
+      } catch (e){
+        if (String(e.message) === "no_confirmada") return { error: "Esa reserva ya no está activa." };
+        return { error: errorMsg(e, "No se pudo cancelar.") };
+      }
+    },
+    async adminClientes(){
+      const { fsM } = await init();
+      const snap = await fsM.getDocs(fsM.collection(db, "clientes"));
+      const out = []; snap.forEach(d => out.push(norm(d.id, d.data()))); return out;
+    },
+    async adminAjustarSaldo(uid, delta, motivo, quien){
+      const { fsM } = await init();
+      const cliRef = fsM.doc(db, "clientes", uid), ajRef = fsM.doc(fsM.collection(db, "ajustes"));
+      try {
+        await fsM.runTransaction(db, async tx => {
+          const cl = await tx.get(cliRef);
+          if (!cl.exists()) throw new Error("No existe la clienta.");
+          const nuevo = Math.max(0, (cl.data().saldo || 0) + delta);
+          tx.update(cliRef, { saldo: nuevo, actualizado: fsM.serverTimestamp() });
+          tx.set(ajRef, { uid, delta, saldoNuevo: nuevo, motivo, quien, fecha: fsM.serverTimestamp() });
+        });
+        return { ok: true };
+      } catch (e){ return { error: errorMsg(e, "No se pudo ajustar el saldo.") }; }
+    },
+    async adminPagoEfectivo(cl, p, quien){
+      const { fsM } = await init();
+      const comRef = fsM.doc(fsM.collection(db, "compras")), cliRef = fsM.doc(db, "clientes", cl.uid);
+      try {
+        await fsM.runTransaction(db, async tx => {
+          const c = await tx.get(cliRef);
+          if (!c.exists()) throw new Error("No existe la clienta.");
+          tx.set(comRef, { ref: refCorta(comRef.id), uid: cl.uid, nombre: cl.nombre, telefono: cl.telefono || "", email: cl.email || "", paqueteId: p.id, paqueteNombre: p.nombre,
+            clases: p.clases, monto: p.precio, estado: "pagada", metodo: "efectivo", creado: fsM.serverTimestamp(), confirmada: fsM.serverTimestamp(), confirmadaPor: quien });
+          tx.update(cliRef, { saldo: (c.data().saldo || 0) + p.clases, actualizado: fsM.serverTimestamp() });
+        });
+        return { ok: true };
+      } catch (e){ return { error: errorMsg(e, "No se pudo registrar el pago.") }; }
     },
   };
 }
 
-const backend = FIREBASE_CONFIG ? backendFirebase(FIREBASE_CONFIG) : backendDemo();
+const backend = DEMO ? backendDemo() : backendFirebase(FIREBASE_CONFIG);
+if (DEMO) $("demo-banner").hidden = false;
+
+/* ================== ESTADO ================== */
+let semana = 0;          // 0 = semana actual
+let cupos = {};          // "fecha_HHMM" -> n
+let misRes = {};         // "fecha_HHMM" -> reserva confirmada del usuario
+let user = null;         // {uid,email,nombre}
+let cliente = null;      // doc de clientes
+let esAdmin = false;
+let sel = null;          // selección de reserva {iso, humana, ho}
+let despues = null;      // acción pendiente tras login/perfil
+let paqueteSel = null;
+
+const setMsg = (id, txt, tipo) => { const m = $(id); m.textContent = txt || ""; m.className = "msg" + (txt ? " " + tipo : ""); };
+const abrir = id => { $(id).hidden = false; };
+const cerrar = id => { $(id).hidden = true; };
+
+/* ================== TEXTOS DE CONFIG ================== */
+(function pintarConfig(){
+  const am = CONFIG.horarios.filter(h => h.h < 12).map(fmtHorario);
+  const pm = CONFIG.horarios.filter(h => h.h >= 12).map(fmtHorario);
+  const txt = `Clases de ${CONFIG.duracionMin} minutos · Lunes a viernes · ${am.join(" · ")}${pm.length ? " — " + pm.join(" · ") : ""}`;
+  $("cal-horarios-txt").textContent = txt;
+  $("contacto-horario").innerHTML = `Lunes a viernes<br>${am.join(" · ")}<br>${pm.join(" · ")}`;
+  $("regla-cupo").textContent = `Máximo ${CONFIG.cupoPorClase} alumnas por clase. Llega 10 minutos antes.`;
+  for (const id of ["lnk-ig", "lnk-ig2"]) $(id).href = CONFIG.instagram;
+  for (const id of ["lnk-fb", "lnk-fb2"]) $(id).href = CONFIG.facebook;
+  $("lnk-wa2").href = `https://wa.me/${CONFIG.whatsapp}`;
+  $("anio").textContent = new Date().getFullYear();
+  const g = $("paquetes-grid");
+  g.innerHTML = PAQUETES.map(p => `
+    <div class="paq${p.destacado ? " destacado" : ""}">
+      ${p.destacado ? '<span class="tag">Más popular</span>' : ""}
+      <h3>${esc(p.nombre)}</h3>
+      <div class="precio">${dinero(p.precio)}<small> MXN</small></div>
+      <div class="por">${p.clases > 1 ? dinero(Math.round(p.precio / p.clases)) + " por clase" : "por clase"}</div>
+      <div class="nota">${esc(p.nota || "")}</div>
+      <button class="btn solid" type="button" data-paq="${esc(p.id)}">Comprar</button>
+    </div>`).join("");
+  g.querySelectorAll("[data-paq]").forEach(b => b.addEventListener("click", () => iniciarCompra(b.dataset.paq)));
+})();
+
+/* ================== SESIÓN ================== */
+backend.onAuth(async u => {
+  user = u;
+  esAdmin = !!(u && ADMINS.includes(u.email));
+  cliente = u ? await backend.getCliente(u.uid) : null;
+  misRes = {};
+  if (u) await cargarMisReservas();
+  pintarSesion();
+  pintarSemana();
+  if (u && despues){ const f = despues; despues = null; f(); }
+});
+
+function pintarSesion(){
+  const b = $("nav-cuenta");
+  if (!user){ b.innerHTML = "Entrar"; $("nav-admin").hidden = true; return; }
+  const saldo = cliente ? (cliente.saldo || 0) : 0;
+  b.innerHTML = `Mi cuenta <span class="saldo-pill">${saldo} clase${saldo === 1 ? "" : "s"}</span>`;
+  $("nav-admin").hidden = !esAdmin;
+}
+
+async function cargarMisReservas(){
+  if (!user) return;
+  try {
+    const rs = await backend.misReservas(user.uid);
+    misRes = {};
+    for (const r of rs) if (r.estado === "confirmada") misRes[`${r.fecha}_${r.horaKey}`] = r;
+  } catch (e){ console.error(e); }
+}
+
+async function refrescarCliente(){
+  if (!user) return;
+  cliente = await backend.getCliente(user.uid);
+  pintarSesion();
+}
+
+$("nav-cuenta").addEventListener("click", () => {
+  if (!user){ despues = () => abrirCuenta(); pedirLogin(); return; }
+  abrirCuenta();
+});
+$("nav-admin").addEventListener("click", () => { if (esAdmin) abrirAdmin(); });
+
+let loginAdmin = false;   // solo afecta al modo demo (elige el usuario de prueba)
+function pedirLogin(sub, admin){
+  loginAdmin = !!admin;
+  $("l-sub").textContent = sub || "Con tu cuenta de Google ves tu saldo de clases, reservas y cancelas.";
+  setMsg("l-msg", "");
+  abrir("m-login");
+}
+
+$("l-google").addEventListener("click", async () => {
+  $("l-google").disabled = true;
+  const r = await backend.login({ admin: loginAdmin });
+  $("l-google").disabled = false;
+  if (r.error){ setMsg("l-msg", r.error, "err"); return; }
+  cerrar("m-login");
+  // onAuth se encarga del resto (incluida la acción pendiente)
+});
+
+/* Perfil: obligatorio tener nombre y teléfono antes de comprar o reservar. */
+function perfilCompleto(){ return !!(cliente && cliente.nombre && /^[0-9]{10}$/.test(cliente.telefono || "")); }
+function pedirPerfil(luego){
+  despues = luego || null;
+  $("p-nombre").value = (cliente && cliente.nombre) || (user && user.nombre) || "";
+  $("p-tel").value = (cliente && cliente.telefono) || "";
+  setMsg("p-msg", "");
+  abrir("m-perfil");
+  setTimeout(() => $(($("p-nombre").value ? "p-tel" : "p-nombre")).focus(), 50);
+}
+$("f-perfil").addEventListener("submit", async e => {
+  e.preventDefault();
+  const nombre = $("p-nombre").value.trim(), tel = $("p-tel").value.trim();
+  if (nombre.length < 3){ setMsg("p-msg", "Escribe tu nombre completo.", "err"); return; }
+  if (!/^[0-9]{10}$/.test(tel)){ setMsg("p-msg", "El teléfono debe tener 10 dígitos.", "err"); return; }
+  $("p-btn").disabled = true;
+  const r = await backend.guardarPerfil(user, { nombre, telefono: tel });
+  $("p-btn").disabled = false;
+  if (r.error){ setMsg("p-msg", r.error, "err"); return; }
+  await refrescarCliente();
+  cerrar("m-perfil");
+  if (despues){ const f = despues; despues = null; f(); }
+});
+
+/* Garantiza sesión + perfil y luego ejecuta la acción. */
+function conSesion(accion, subLogin){
+  if (!user){ despues = () => conSesion(accion, subLogin); pedirLogin(subLogin); return; }
+  if (!perfilCompleto()){ pedirPerfil(() => conSesion(accion, subLogin)); return; }
+  accion();
+}
 
 /* ================== CALENDARIO ================== */
-let semana = 0;          // 0 = semana actual
-let cupos = {};          // cache "fecha_hora" -> n
-let sel = null;          // {fechaISO, fechaHumana, hora}
-
-const $ = id => document.getElementById(id);
-
 function diasDeSemana(offset){
   const lun = lunesDe(new Date());
   lun.setDate(lun.getDate() + offset * 7);
-  return CONFIG.diasHabiles.map(i => {
-    const d = new Date(lun);
-    d.setDate(lun.getDate() + (i - 1));
-    return d;
-  });
+  return CONFIG.diasHabiles.map(i => { const d = new Date(lun); d.setDate(lun.getDate() + (i - 1)); return d; });
 }
 
 async function pintarSemana(){
   const dias = diasDeSemana(semana);
   const hoyISO = fmtISO(new Date());
-  const ahora = new Date();
-
-  const d0 = dias[0], d4 = dias[4];
+  const ahora = Date.now();
+  const d0 = dias[0], d4 = dias[dias.length - 1];
   const mismoMes = d0.getMonth() === d4.getMonth();
   $("cal-titulo").textContent = mismoMes
     ? `${d0.getDate()} – ${d4.getDate()} de ${MESES[d0.getMonth()]}`
@@ -640,146 +1303,363 @@ async function pintarSemana(){
   $("cal-prev").disabled = semana <= 0;
   $("cal-next").disabled = semana >= CONFIG.semanasFuturas;
 
-  $("cal-grid").hidden = true;
-  $("cal-cargando").hidden = false;
-  try {
-    cupos = await backend.cargarCupos(dias.map(fmtISO));
-  } catch(e){
-    console.error(e);
-    cupos = {};
-  }
-  $("cal-cargando").hidden = true;
-  $("cal-grid").hidden = false;
+  $("cal-grid").hidden = true; $("cal-cargando").hidden = false;
+  try { cupos = await backend.cargarCupos(dias.map(fmtISO)); } catch (e){ console.error(e); cupos = {}; }
+  $("cal-cargando").hidden = true; $("cal-grid").hidden = false;
 
   const g = $("cal-grid");
   g.innerHTML = "";
-  g.appendChild(document.createElement("div")); // esquina vacía
+  g.appendChild(document.createElement("div"));
   for (const d of dias){
     const c = document.createElement("div");
     c.className = "hcell" + (fmtISO(d) === hoyISO ? " today" : "");
     c.innerHTML = `<div class="dow">${DOWS[d.getDay()]}</div><div class="dnum">${d.getDate()}</div>`;
     g.appendChild(c);
   }
-  for (const h of CONFIG.horas){
+  for (const ho of CONFIG.horarios){
     const lbl = document.createElement("div");
     lbl.className = "hora-lbl";
-    lbl.textContent = fmtHora(h);
+    lbl.innerHTML = `<span>${fmtHorario(ho)}</span><small>${CONFIG.duracionMin} min</small>`;
     g.appendChild(lbl);
     for (const d of dias){
-      const iso = fmtISO(d);
-      const n = cupos[`${iso}_${h}`] || 0;
+      const iso = fmtISO(d), k = `${iso}_${keyHora(ho)}`;
+      const n = cupos[k] || 0;
       const libres = Math.max(0, CONFIG.cupoPorClase - n);
-      const finClase = new Date(d); finClase.setHours(h, 50, 0, 0);
-      const pasado = finClase <= ahora;
+      const pasado = inicioClase(iso, ho).getTime() <= ahora;
+      const mio = misRes[k];
       const cell = document.createElement("div");
       let cls = "libre", st = "Disponible", lug = `${libres} lugar${libres === 1 ? "" : "es"}`;
-      if (pasado){ cls = "pasado"; st = "—"; lug = ""; }
+      if (mio && !pasado){ cls = "mio"; st = "Tu lugar"; lug = puedeCancelar(iso) ? "toca para cancelar" : "sin cancelación"; }
+      else if (pasado){ cls = "pasado"; st = "—"; lug = ""; }
       else if (libres === 0){ cls = "lleno"; st = "Lleno"; lug = ""; }
       cell.className = `slot ${cls}`;
       cell.innerHTML = `<span class="st">${st}</span>${lug ? `<span class="lug">${lug}</span>` : ""}`;
-      if (cls === "libre"){
-        cell.addEventListener("click", () => abrirReserva(iso, fmtHumana(d), h));
-      }
+      if (cls === "libre") cell.addEventListener("click", () => intentarReservar(iso, fmtHumana(d), ho));
+      if (cls === "mio") cell.addEventListener("click", () => abrirCancelar(mio));
       g.appendChild(cell);
     }
+  }
+  // En pantallas chicas, deja a la vista el primer día con clases por venir
+  const sc = document.querySelector(".cal-scroll");
+  if (sc && sc.scrollWidth > sc.clientWidth){
+    const idx = dias.findIndex(d => fmtISO(d) >= hoyISO);
+    const hc = g.children[1 + Math.max(0, idx)];
+    if (hc) sc.scrollLeft = Math.max(0, hc.offsetLeft - 78);
   }
 }
 
 /* ================== RESERVA ================== */
-function abrirReserva(iso, humana, hora){
-  sel = { iso, humana, hora };
-  $("r-fecha").textContent = humana;
-  $("r-hora").textContent = `${fmtHora(hora)} – ${fmtHora(hora).replace(":00", ":50")}`;
-  $("r-msg").className = "msg";
-  $("f-reserva").reset();
-  $("m-reserva").hidden = false;
-  $("r-nombre").focus();
+function intentarReservar(iso, humana, ho){
+  sel = { iso, humana, ho };
+  conSesion(() => {
+    const saldo = cliente ? (cliente.saldo || 0) : 0;
+    if (saldo < 1){
+      $("ss-txt").innerHTML = `Para apartar el <strong>${esc(humana)}</strong> a las <strong>${fmtHorario(ho)}</strong> necesitas al menos 1 clase en tu saldo. Compra un paquete y, en cuanto confirmemos tu pago, podrás reservar.`;
+      abrir("m-sinsaldo"); return;
+    }
+    $("r-fecha").textContent = humana;
+    $("r-hora").textContent = fmtRango(ho);
+    $("r-saldo-txt").innerHTML = `Se descontará <strong>1 clase</strong> de tu saldo. Te quedarán <strong>${saldo - 1}</strong>.`;
+    $("r-limite-txt").innerHTML = `Puedes cancelar sin perder la clase hasta el <strong>${fmtLimite(iso)}</strong>`;
+    setMsg("r-msg", "");
+    $("r-btn").disabled = false;
+    abrir("m-reserva");
+  }, "Entra con Google para apartar tu lugar.");
 }
 
-$("f-reserva").addEventListener("submit", async e => {
-  e.preventDefault();
-  const nombre = $("r-nombre").value.trim();
-  const tel = $("r-tel").value.trim();
-  const msg = $("r-msg");
-  if (nombre.length < 3){ msg.textContent = "Escribe tu nombre completo."; msg.className = "msg err"; return; }
-  if (!/^[0-9]{10}$/.test(tel)){ msg.textContent = "El teléfono debe tener 10 dígitos."; msg.className = "msg err"; return; }
+$("r-btn").addEventListener("click", async () => {
+  if (!sel || !user) return;
   $("r-btn").disabled = true;
-  msg.className = "msg";
-  const r = await backend.reservar(sel.iso, sel.hora, nombre, tel);
+  const r = await backend.reservar(user, sel.iso, sel.ho);
   $("r-btn").disabled = false;
-  if (r.error === "lleno"){
-    msg.textContent = "Ese horario se acaba de llenar. Elige otro, por favor.";
-    msg.className = "msg err";
-    pintarSemana();
-    return;
-  }
-  if (r.error){ msg.textContent = r.error; msg.className = "msg err"; return; }
-  $("m-reserva").hidden = true;
-  $("conf-txt").innerHTML = `Te esperamos el <strong>${sel.humana}</strong> a las <strong>${fmtHora(sel.hora)}</strong>.<br>Llega 10 minutos antes de tu clase.` + (backend.demo ? "<br><br><em>(Modo demostración: la reserva no queda guardada.)</em>" : "");
-  $("m-conf").hidden = false;
+  if (r.error === "lleno"){ setMsg("r-msg", "Ese horario se acaba de llenar. Elige otro, por favor.", "err"); pintarSemana(); return; }
+  if (r.error === "sin_saldo"){ cerrar("m-reserva"); await refrescarCliente(); abrir("m-sinsaldo"); return; }
+  if (r.error === "duplicada"){ setMsg("r-msg", "Ya tienes lugar en esta clase.", "err"); return; }
+  if (r.error){ setMsg("r-msg", r.error, "err"); return; }
+  cerrar("m-reserva");
+  await Promise.all([refrescarCliente(), cargarMisReservas()]);
+  $("conf-tit").textContent = "¡Lugar apartado!";
+  $("conf-txt").innerHTML = `Te esperamos el <strong>${esc(sel.humana)}</strong> a las <strong>${fmtHorario(sel.ho)}</strong>.<br>Llega 10 minutos antes. Te quedan <strong>${r.saldo}</strong> clase${r.saldo === 1 ? "" : "s"} en tu saldo.`
+    + (backend.demo ? "<br><br><em>(Modo demostración: la reserva no queda guardada.)</em>" : "");
+  abrir("m-conf");
   pintarSemana();
 });
 
+/* ================== CANCELACIÓN ================== */
+let resCancel = null;
+function abrirCancelar(r){
+  resCancel = r;
+  const d = fechaDeISO(r.fecha), ho = horarioDeKey(r.horaKey) || { h: 0, m: 0 };
+  $("c-fecha").textContent = fmtHumana(d);
+  $("c-hora").textContent = fmtRango(ho);
+  const ok = puedeCancelar(r.fecha);
+  $("c-txt").innerHTML = ok
+    ? `Si cancelas ahora, la clase <strong>regresa a tu saldo</strong> para usarla en otra fecha. Límite para cancelar: <strong>${fmtLimite(r.fecha)}</strong>`
+    : `El límite para cancelar esta clase (${fmtLimite(r.fecha)}) ya pasó, así que <strong>ya no se puede cancelar</strong> y la clase se considera tomada. Si tuviste un imprevisto, escríbenos por <a href="https://wa.me/${CONFIG.whatsapp}" target="_blank" rel="noopener" style="color:var(--oro-suave);text-decoration:underline">WhatsApp</a>.`;
+  $("c-btn").hidden = !ok;
+  setMsg("c-msg", "");
+  abrir("m-cancelar");
+}
+$("c-btn").addEventListener("click", async () => {
+  if (!resCancel || !user) return;
+  $("c-btn").disabled = true;
+  const r = await backend.cancelar(user, resCancel);
+  $("c-btn").disabled = false;
+  if (r.error === "fuera_de_tiempo"){ setMsg("c-msg", "El límite para cancelar ya pasó.", "err"); return; }
+  if (r.error){ setMsg("c-msg", r.error, "err"); return; }
+  cerrar("m-cancelar");
+  await Promise.all([refrescarCliente(), cargarMisReservas()]);
+  $("conf-tit").textContent = "Reserva cancelada";
+  $("conf-txt").innerHTML = `La clase regresó a tu saldo. Ahora tienes <strong>${cliente ? cliente.saldo : "—"}</strong> clase${cliente && cliente.saldo === 1 ? "" : "s"} disponibles.`;
+  abrir("m-conf");
+  pintarSemana();
+  if (!$("m-cuenta").hidden) pintarCuenta();
+});
+
+/* ================== COMPRA / PAGO ================== */
+function iniciarCompra(paqId){
+  const p = paqueteDe(paqId); if (!p) return;
+  paqueteSel = p;
+  conSesion(async () => {
+    const r = await backend.crearCompra(user, cliente, p);
+    if (r.error){ $("conf-tit").textContent = "No se pudo registrar"; $("conf-txt").textContent = r.error; abrir("m-conf"); return; }
+    mostrarPago(r.compra);
+  }, "Entra con Google para comprar tus clases.");
+}
+
+function mostrarPago(compra){
+  const p = paqueteDe(compra.paqueteId) || { nombre: compra.paqueteNombre, mercadoPago: "" };
+  $("pg-sub").innerHTML = `Paquete <strong>${esc(compra.paqueteNombre)}</strong> · <strong>${dinero(compra.monto)} MXN</strong>`;
+  $("pg-ref").textContent = compra.ref;
+  const t = PAGO.transferencia;
+  if (t && t.clabe){
+    $("pg-transfer").innerHTML = `
+      <div class="pago-bloque">
+        <h4>Opción 1 · Transferencia (SPEI)</h4>
+        <div class="dato"><b>Banco</b><span class="v">${esc(t.banco || "")}</span></div>
+        <div class="dato"><b>Titular</b><span class="v">${esc(t.titular || "")}</span></div>
+        <div class="dato"><b>CLABE</b><span class="v">${esc(t.clabe)} <button class="copiar" type="button" data-copy="${esc(t.clabe)}">Copiar</button></span></div>
+        ${t.tarjeta ? `<div class="dato"><b>Tarjeta</b><span class="v">${esc(t.tarjeta)} <button class="copiar" type="button" data-copy="${esc(t.tarjeta)}">Copiar</button></span></div>` : ""}
+        <div class="dato"><b>Monto</b><span class="v">${dinero(compra.monto)} MXN</span></div>
+        <div class="dato"><b>Concepto</b><span class="v">ELAN ${esc(compra.ref)} <button class="copiar" type="button" data-copy="ELAN ${esc(compra.ref)}">Copiar</button></span></div>
+      </div>`;
+  } else {
+    $("pg-transfer").innerHTML = `
+      <div class="pago-bloque">
+        <h4>Opción 1 · Transferencia o depósito</h4>
+        <p class="fine" style="margin:0">Pídenos los datos de la cuenta por WhatsApp con tu referencia y te los mandamos al momento.</p>
+      </div>`;
+  }
+  $("pg-mp").innerHTML = p.mercadoPago
+    ? `<div class="pago-bloque">
+        <h4>Opción 2 · Mercado Pago (tarjeta)</h4>
+        <p class="fine" style="margin:0 0 10px">Paga con tarjeta de crédito o débito. Al terminar, mándanos la captura con tu referencia.</p>
+        <a class="btn" href="${esc(p.mercadoPago)}" target="_blank" rel="noopener" style="width:100%">Pagar con Mercado Pago</a>
+      </div>`
+    : "";
+  const txt = `Hola, soy ${cliente ? cliente.nombre : ""}. Compré el paquete "${compra.paqueteNombre}" (${dinero(compra.monto)} MXN), referencia ${compra.ref}. Te mando mi comprobante de pago.`;
+  $("pg-wa").href = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(txt)}`;
+  $("pg-transfer").querySelectorAll("[data-copy]").forEach(b => b.addEventListener("click", async () => {
+    try { await navigator.clipboard.writeText(b.dataset.copy); b.textContent = "Copiado"; setTimeout(() => b.textContent = "Copiar", 1500); } catch (e){}
+  }));
+  abrir("m-pago");
+}
+
+/* ================== MI CUENTA ================== */
+function abrirCuenta(){
+  if (!perfilCompleto()){ pedirPerfil(() => abrirCuenta()); return; }
+  abrir("m-cuenta");
+  pintarCuenta();
+}
+async function pintarCuenta(){
+  await refrescarCliente();
+  $("cu-who").textContent = `${cliente.nombre} · ${user.email}`;
+  $("cu-saldo").textContent = cliente.saldo || 0;
+  const ahora = Date.now();
+  let rs = [], cs = [];
+  try { [rs, cs] = await Promise.all([backend.misReservas(user.uid), backend.misCompras(user.uid)]); } catch (e){ console.error(e); }
+  const prox = rs.filter(r => r.estado === "confirmada" && r.inicio && r.inicio.getTime() > ahora).sort((a, b) => a.inicio - b.inicio);
+  $("cu-reservas").innerHTML = prox.length ? prox.map(r => {
+    const ho = horarioDeKey(r.horaKey) || { h: 0, m: 0 };
+    const ok = puedeCancelar(r.fecha);
+    return `<div class="item">
+      <div class="t">${fmtHumana(fechaDeISO(r.fecha))} · <strong>${fmtHorario(ho)}</strong>
+        <small>${ok ? "Cancela sin perderla hasta el " + fmtLimite(r.fecha) : "Ya no se puede cancelar (límite: " + fmtLimite(r.fecha) + ")"}</small></div>
+      ${ok ? `<button class="btn small peligro" type="button" data-cancel="${esc(r.id)}">Cancelar</button>` : '<span class="chip">Confirmada</span>'}
+    </div>`;
+  }).join("") : '<div class="vacio">No tienes clases apartadas. ¡Ve al calendario!</div>';
+  $("cu-reservas").querySelectorAll("[data-cancel]").forEach(b => b.addEventListener("click", () => {
+    const r = prox.find(x => x.id === b.dataset.cancel); if (r) abrirCancelar(r);
+  }));
+  cs.sort((a, b) => (b.creado || 0) - (a.creado || 0));
+  const chip = e => e === "pagada" ? '<span class="chip ok">Pagada</span>' : e === "pendiente" ? '<span class="chip pend">Pendiente de pago</span>' : '<span class="chip bad">Rechazada</span>';
+  $("cu-compras").innerHTML = cs.length ? cs.map(c => `<div class="item">
+      <div class="t">${esc(c.paqueteNombre)} · ${dinero(c.monto)} MXN <small>Ref. ${esc(c.ref)} · ${c.creado ? c.creado.toLocaleDateString("es-MX") : ""}${c.metodo === "efectivo" ? " · efectivo" : ""}</small></div>
+      <div style="display:flex;gap:8px;align-items:center">${chip(c.estado)}${c.estado === "pendiente" ? `<button class="linklike" type="button" data-pagar="${esc(c.id)}">Ver cómo pagar</button>` : ""}</div>
+    </div>`).join("") : '<div class="vacio">Aún no has comprado clases.</div>';
+  $("cu-compras").querySelectorAll("[data-pagar]").forEach(b => b.addEventListener("click", () => {
+    const c = cs.find(x => x.id === b.dataset.pagar); if (c){ cerrar("m-cuenta"); mostrarPago(c); }
+  }));
+}
+$("cu-editar").addEventListener("click", () => { cerrar("m-cuenta"); pedirPerfil(() => abrirCuenta()); });
+$("cu-salir").addEventListener("click", async () => { cerrar("m-cuenta"); await backend.logout(); });
+
 /* ================== ADMIN ================== */
 $("abrir-admin").addEventListener("click", () => {
-  $("l-msg").className = "msg";
-  $("m-login").hidden = false;
+  if (user && esAdmin){ abrirAdmin(); return; }
+  if (user && !esAdmin){ $("conf-tit").textContent = "Sin acceso"; $("conf-txt").textContent = "Tu cuenta no tiene acceso al panel de administración."; abrir("m-conf"); return; }
+  despues = () => { if (esAdmin) abrirAdmin(); else { $("conf-tit").textContent = "Sin acceso"; $("conf-txt").textContent = "Esta cuenta no tiene acceso al panel."; abrir("m-conf"); } };
+  pedirLogin("Solo personal de Elan Barre. Entra con la cuenta de Google del estudio.", true);
 });
+$("adm-salir").addEventListener("click", async () => { cerrar("m-admin"); await backend.logout(); });
 
-$("l-google").addEventListener("click", async () => {
-  const r = await backend.login();
-  if (r.error){
-    const m = $("l-msg"); m.textContent = r.error; m.className = "msg err"; return;
-  }
-  $("m-login").hidden = true;
-  $("adm-who").textContent = r.quien;
+document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => {
+  document.querySelectorAll(".tab").forEach(x => x.classList.toggle("on", x === t));
+  for (const k of ["pagos", "clases", "clientas"]) $("tab-" + k).hidden = t.dataset.tab !== k;
+  setMsg("adm-msg", "");
+  if (t.dataset.tab === "pagos") pintarPagos();
+  if (t.dataset.tab === "clases") verDiaAdmin();
+  if (t.dataset.tab === "clientas") pintarClientas();
+}));
+
+function abrirAdmin(){
+  $("adm-who").textContent = user.email;
   $("adm-fecha").value = fmtISO(new Date());
-  $("m-admin").hidden = false;
-  verDiaAdmin();
-});
+  setMsg("adm-msg", "");
+  abrir("m-admin");
+  pintarPagos();
+}
 
-$("adm-salir").addEventListener("click", async () => {
-  await backend.logout();
-  $("m-admin").hidden = true;
-});
+async function pintarPagos(){
+  const out = $("adm-pagos"), out2 = $("adm-pagados");
+  out.innerHTML = '<div class="cargando">Cargando…</div>'; out2.innerHTML = "";
+  let pend = [], rec = [];
+  try { [pend, rec] = await Promise.all([backend.adminComprasPendientes(), backend.adminComprasRecientes()]); }
+  catch (e){ out.innerHTML = '<p class="adm-vacio">No se pudieron cargar las compras.</p>'; return; }
+  pend.sort((a, b) => (a.creado || 0) - (b.creado || 0));
+  $("adm-npend").textContent = pend.length ? `(${pend.length})` : "";
+  const fila = c => `<tr>
+      <td class="h">${esc(c.ref)}</td>
+      <td>${esc(c.nombre)}<br><small>${esc(c.telefono || "")}${c.telefono ? ` · <a href="https://wa.me/52${esc(c.telefono)}" target="_blank" rel="noopener" style="color:var(--oro-suave)">WhatsApp</a>` : ""}</small></td>
+      <td>${esc(c.paqueteNombre)} (${c.clases})</td>
+      <td>${dinero(c.monto)}</td>
+      <td>${c.creado ? c.creado.toLocaleString("es-MX", { dateStyle: "short", timeStyle: "short" }) : ""}</td>
+      <td style="white-space:nowrap"><button class="btn small solid" type="button" data-conf="${esc(c.id)}">Confirmar pago</button> <button class="linklike rojo" type="button" data-rech="${esc(c.id)}">Rechazar</button></td>
+    </tr>`;
+  out.innerHTML = pend.length
+    ? `<div class="tabla-scroll"><table class="adm-tabla"><thead><tr><th>Ref.</th><th>Clienta</th><th>Paquete</th><th>Monto</th><th>Solicitud</th><th></th></tr></thead><tbody>${pend.map(fila).join("")}</tbody></table></div>`
+    : '<p class="adm-vacio">No hay pagos pendientes.</p>';
+  out.querySelectorAll("[data-conf]").forEach(b => b.addEventListener("click", async () => {
+    const c = pend.find(x => x.id === b.dataset.conf); if (!c) return;
+    b.disabled = true;
+    const r = await backend.adminConfirmarCompra(c, user.email);
+    if (r.error){ setMsg("adm-msg", r.error, "err"); b.disabled = false; return; }
+    setMsg("adm-msg", `Pago de ${c.nombre} confirmado: +${c.clases} clase${c.clases === 1 ? "" : "s"}.`, "ok");
+    pintarPagos();
+  }));
+  out.querySelectorAll("[data-rech]").forEach(b => b.addEventListener("click", async () => {
+    const c = pend.find(x => x.id === b.dataset.rech); if (!c) return;
+    if (b.dataset.arm !== "1"){ b.dataset.arm = "1"; b.textContent = "¿Seguro? Rechazar"; return; }
+    const r = await backend.adminRechazarCompra(c, user.email);
+    if (r.error){ setMsg("adm-msg", r.error, "err"); return; }
+    setMsg("adm-msg", `Compra ${c.ref} rechazada.`, "info");
+    pintarPagos();
+  }));
+  out2.innerHTML = rec.length
+    ? `<div class="tabla-scroll"><table class="adm-tabla"><thead><tr><th>Ref.</th><th>Clienta</th><th>Paquete</th><th>Monto</th><th>Estado</th><th>Confirmó</th></tr></thead><tbody>${rec.map(c => `<tr>
+        <td class="h">${esc(c.ref)}</td><td>${esc(c.nombre)}</td><td>${esc(c.paqueteNombre)} (${c.clases})</td><td>${dinero(c.monto)}</td>
+        <td>${c.estado === "pagada" ? '<span class="chip ok">Pagada</span>' : '<span class="chip bad">Rechazada</span>'}${c.metodo === "efectivo" ? ' <span class="chip">Efectivo</span>' : ""}</td>
+        <td><small>${esc((c.confirmadaPor || "").split("@")[0])}<br>${c.confirmada ? c.confirmada.toLocaleDateString("es-MX") : ""}</small></td></tr>`).join("")}</tbody></table></div>`
+    : '<p class="adm-vacio">Todavía no hay pagos confirmados.</p>';
+}
 
 $("adm-ver").addEventListener("click", verDiaAdmin);
-
 async function verDiaAdmin(){
-  const f = $("adm-fecha").value;
-  if (!f) return;
+  const f = $("adm-fecha").value; if (!f) return;
   const out = $("adm-out");
   out.innerHTML = '<div class="cargando">Cargando…</div>';
   let lista = [];
-  try { lista = await backend.reservasDelDia(f); }
-  catch(e){ out.innerHTML = '<p class="adm-vacio">No se pudieron cargar las reservas (¿sesión válida?).</p>'; return; }
+  try { lista = await backend.adminReservasDelDia(f); }
+  catch (e){ out.innerHTML = '<p class="adm-vacio">No se pudieron cargar las reservas (¿sesión válida?).</p>'; return; }
+  const act = lista.filter(r => r.estado === "confirmada");
   const porHora = {};
-  for (const r of lista) (porHora[r.hora] = porHora[r.hora] || []).push(r);
-  let html = '<table class="adm-tabla"><thead><tr><th>Horario</th><th>Inscritos</th><th>Nombre</th><th>Teléfono</th></tr></thead><tbody>';
-  for (const h of CONFIG.horas){
-    const rs = (porHora[h] || []);
-    if (rs.length === 0){
-      html += `<tr><td class="h">${fmtHora(h)}</td><td>0/${CONFIG.cupoPorClase}</td><td class="adm-vacio" colspan="2">Sin inscripciones</td></tr>`;
-    } else {
-      rs.forEach((r, i) => {
-        html += `<tr>${i === 0 ? `<td class="h" rowspan="${rs.length}">${fmtHora(h)}</td><td rowspan="${rs.length}">${rs.length}/${CONFIG.cupoPorClase}</td>` : ""}<td>${r.nombre}</td><td>${r.telefono}</td></tr>`;
-      });
-    }
+  for (const r of act) (porHora[r.horaKey] = porHora[r.horaKey] || []).push(r);
+  let html = '<div class="tabla-scroll"><table class="adm-tabla"><thead><tr><th>Horario</th><th>Cupo</th><th>Nombre</th><th>Teléfono</th><th></th></tr></thead><tbody>';
+  for (const ho of CONFIG.horarios){
+    const k = keyHora(ho), rs = porHora[k] || [];
+    if (!rs.length){ html += `<tr><td class="h">${fmtHorario(ho)}</td><td>0/${CONFIG.cupoPorClase}</td><td class="adm-vacio" colspan="3">Sin inscripciones</td></tr>`; continue; }
+    rs.forEach((r, i) => {
+      html += `<tr>${i === 0 ? `<td class="h" rowspan="${rs.length}">${fmtHorario(ho)}</td><td rowspan="${rs.length}">${rs.length}/${CONFIG.cupoPorClase}</td>` : ""}
+        <td>${esc(r.nombre)}</td><td>${esc(r.telefono || "")}</td>
+        <td style="white-space:nowrap"><button class="linklike rojo" type="button" data-cx="${esc(r.id)}" data-dev="1">Cancelar y devolver clase</button><br><button class="linklike" type="button" data-cx="${esc(r.id)}" data-dev="0">Cancelar sin devolver</button></td></tr>`;
+    });
   }
-  html += "</tbody></table>";
+  html += "</tbody></table></div>";
+  const canc = lista.filter(r => r.estado !== "confirmada");
+  if (canc.length) html += `<p class="fine">Canceladas ese día: ${canc.map(r => `${esc(r.nombre)} (${esc(r.hora)}${r.devuelta ? ", clase devuelta" : ""})`).join(" · ")}</p>`;
   out.innerHTML = html;
+  out.querySelectorAll("[data-cx]").forEach(b => b.addEventListener("click", async () => {
+    const r = act.find(x => x.id === b.dataset.cx); if (!r) return;
+    if (b.dataset.arm !== "1"){ b.dataset.arm = "1"; b.textContent = "¿Seguro? " + b.textContent; return; }
+    const res = await backend.adminCancelarReserva(r, b.dataset.dev === "1", user.email);
+    if (res.error){ setMsg("adm-msg", res.error, "err"); return; }
+    setMsg("adm-msg", `Reserva de ${r.nombre} cancelada${b.dataset.dev === "1" ? " y clase devuelta a su saldo" : ""}.`, "ok");
+    verDiaAdmin();
+  }));
+}
+
+let clientesCache = [];
+async function pintarClientas(){
+  const out = $("adm-clientas");
+  out.innerHTML = '<div class="cargando">Cargando…</div>';
+  try { clientesCache = await backend.adminClientes(); } catch (e){ out.innerHTML = '<p class="adm-vacio">No se pudieron cargar las clientas.</p>'; return; }
+  clientesCache.sort((a, b) => (a.nombre || "").localeCompare(b.nombre || ""));
+  filtrarClientas();
+}
+$("adm-buscar").addEventListener("input", filtrarClientas);
+function filtrarClientas(){
+  const q = $("adm-buscar").value.trim().toLowerCase();
+  const lista = clientesCache.filter(c => !q || [c.nombre, c.telefono, c.email].some(v => (v || "").toLowerCase().includes(q)));
+  const out = $("adm-clientas");
+  if (!lista.length){ out.innerHTML = `<p class="adm-vacio">${clientesCache.length ? "Sin resultados." : "Todavía no hay clientas registradas."}</p>`; return; }
+  const opts = PAQUETES.map(p => `<option value="${esc(p.id)}">${esc(p.nombre)} · ${dinero(p.precio)}</option>`).join("");
+  out.innerHTML = `<div class="tabla-scroll"><table class="adm-tabla"><thead><tr><th>Clienta</th><th>Saldo</th><th>Acciones</th></tr></thead><tbody>${lista.map(c => `<tr>
+      <td>${esc(c.nombre || "(sin nombre)")}<br><small>${esc(c.telefono || "")} · ${esc(c.email || "")}</small></td>
+      <td class="h" style="font-size:1.2rem">${c.saldo || 0}</td>
+      <td>
+        <div class="mini-form"><select data-efe-paq="${esc(c.uid)}">${opts}</select><button class="btn small" type="button" data-efe="${esc(c.uid)}">Registrar pago en efectivo</button></div>
+        <div class="mini-form"><input type="number" step="1" placeholder="± clases" data-aj-n="${esc(c.uid)}" style="max-width:110px"><input type="text" placeholder="Motivo" data-aj-m="${esc(c.uid)}"><button class="btn small" type="button" data-aj="${esc(c.uid)}">Ajustar saldo</button></div>
+      </td></tr>`).join("")}</tbody></table></div>`;
+  out.querySelectorAll("[data-efe]").forEach(b => b.addEventListener("click", async () => {
+    const c = clientesCache.find(x => x.uid === b.dataset.efe); const p = paqueteDe(out.querySelector(`[data-efe-paq="${b.dataset.efe}"]`).value);
+    if (!c || !p) return;
+    if (b.dataset.arm !== "1"){ b.dataset.arm = "1"; b.textContent = `¿Confirmar ${dinero(p.precio)} en efectivo?`; return; }
+    b.disabled = true;
+    const r = await backend.adminPagoEfectivo(c, p, user.email);
+    if (r.error){ setMsg("adm-msg", r.error, "err"); b.disabled = false; return; }
+    setMsg("adm-msg", `Pago en efectivo de ${c.nombre} registrado: +${p.clases} clase${p.clases === 1 ? "" : "s"}.`, "ok");
+    pintarClientas();
+  }));
+  out.querySelectorAll("[data-aj]").forEach(b => b.addEventListener("click", async () => {
+    const uid = b.dataset.aj, c = clientesCache.find(x => x.uid === uid);
+    const n = parseInt(out.querySelector(`[data-aj-n="${uid}"]`).value, 10), m = out.querySelector(`[data-aj-m="${uid}"]`).value.trim();
+    if (!c || !n){ setMsg("adm-msg", "Escribe cuántas clases sumar (+) o restar (−).", "err"); return; }
+    if (!m){ setMsg("adm-msg", "Escribe el motivo del ajuste.", "err"); return; }
+    b.disabled = true;
+    const r = await backend.adminAjustarSaldo(uid, n, m, user.email);
+    if (r.error){ setMsg("adm-msg", r.error, "err"); b.disabled = false; return; }
+    setMsg("adm-msg", `Saldo de ${c.nombre} ajustado (${n > 0 ? "+" : ""}${n}).`, "ok");
+    pintarClientas();
+  }));
 }
 
 /* ================== GENERALES ================== */
 document.querySelectorAll("[data-cierra]").forEach(b =>
-  b.addEventListener("click", () => $(b.dataset.cierra).hidden = true));
+  b.addEventListener("click", () => cerrar(b.dataset.cierra)));
 document.querySelectorAll(".modal-bg").forEach(m =>
   m.addEventListener("click", e => { if (e.target === m) m.hidden = true; }));
-
 $("cal-prev").addEventListener("click", () => { if (semana > 0){ semana--; pintarSemana(); } });
 $("cal-next").addEventListener("click", () => { if (semana < CONFIG.semanasFuturas){ semana++; pintarSemana(); } });
-
-$("anio").textContent = new Date().getFullYear();
 
 pintarSemana();
 </script>
