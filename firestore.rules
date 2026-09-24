@@ -1,0 +1,171 @@
+rules_version = '2';
+// Reglas de seguridad de Firestore — Elan Barre (elanbarre.github.io)
+// Colecciones: cupos, clientes, reservas, compras, ajustes.
+// Pegar completo en Firebase Console → Firestore Database → Reglas → Publicar.
+service cloud.firestore {
+  match /databases/{db}/documents {
+
+    // ---------- helpers ----------
+    function signedIn(){ return request.auth != null; }
+    function isAdmin(){
+      return signedIn() && request.auth.token.email != null
+        && request.auth.token.email.lower() in ['elanbarre@gmail.com', 'rascenciobaker@gmail.com'];
+    }
+    function esDueno(uid){ return signedIn() && request.auth.uid == uid; }
+    function cupoMax(){ return 10; }
+    function horariosValidos(){ return ['0620', '0720', '0820', '1915', '2015']; }
+    function fechaValida(f){ return f is string && f.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$'); }
+
+    // León, Gto. = UTC-6 todo el año. Inicio de la clase y límite de cancelación
+    // (10:00 a. m. del día anterior) se calculan en el servidor para que nadie los altere.
+    function medianocheUTC(fecha){
+      return timestamp.date(int(fecha[0:4]), int(fecha[5:7]), int(fecha[8:10]));
+    }
+    function inicioDe(fecha, horaKey){
+      return medianocheUTC(fecha) + duration.value(int(horaKey[0:2]) + 6, 'h') + duration.value(int(horaKey[2:4]), 'm');
+    }
+    function limiteDe(fecha){
+      // día anterior 10:00 (UTC-6) = fecha 00:00 UTC − 8 h
+      return medianocheUTC(fecha) - duration.value(8, 'h');
+    }
+
+    function cupoPath(fecha, horaKey){ return /databases/$(db)/documents/cupos/$(fecha + '_' + horaKey); }
+    function clientePath(uid){ return /databases/$(db)/documents/clientes/$(uid); }
+    function reservaPath(rid){ return /databases/$(db)/documents/reservas/$(rid); }
+
+    function nAntes(p){ return exists(p) ? get(p).data.n : 0; }
+    function nDespues(p){ return existsAfter(p) ? getAfter(p).data.n : 0; }
+    function saldoAntes(uid){ return get(clientePath(uid)).data.saldo; }
+    function saldoDespues(uid){ return getAfter(clientePath(uid)).data.saldo; }
+
+    // La reserva rid queda confirmada en este mismo lote (y no lo estaba antes)
+    function reservaConfirmadaEnLote(rid, uid){
+      return rid is string && existsAfter(reservaPath(rid))
+        && getAfter(reservaPath(rid)).data.uid == uid
+        && getAfter(reservaPath(rid)).data.estado == 'confirmada'
+        && (!exists(reservaPath(rid)) || get(reservaPath(rid)).data.estado != 'confirmada');
+    }
+    // La reserva rid pasa de confirmada a cancelada en este mismo lote
+    function reservaCanceladaEnLote(rid, uid){
+      return rid is string && exists(reservaPath(rid))
+        && get(reservaPath(rid)).data.uid == uid
+        && get(reservaPath(rid)).data.estado == 'confirmada'
+        && existsAfter(reservaPath(rid))
+        && getAfter(reservaPath(rid)).data.estado == 'cancelada';
+    }
+
+    // ---------- cupos (contador público por clase) ----------
+    match /cupos/{cid} {
+      allow read: if true;
+      allow write: if isAdmin();
+      allow create: if signedIn() && cupoCambioValido(cid, 0);
+      allow update: if signedIn() && cupoCambioValido(cid, resource.data.n);
+    }
+    function cupoCambioValido(cid, antes){
+      let d = request.resource.data;
+      let rid = request.auth.uid + '_' + cid;
+      return d.keys().hasOnly(['n', 'fecha', 'hora'])
+        && d.n is int && d.n >= 0 && d.n <= cupoMax()
+        && (
+          (d.n == antes + 1 && reservaConfirmadaEnLote(rid, request.auth.uid))
+          || (d.n == antes - 1 && reservaCanceladaEnLote(rid, request.auth.uid))
+        );
+    }
+
+    // ---------- clientes (perfil + saldo de clases) ----------
+    match /clientes/{uid} {
+      allow read: if isAdmin() || esDueno(uid);
+      allow write: if isAdmin();
+      allow create: if esDueno(uid) && clienteNuevoValido(uid);
+      allow update: if esDueno(uid) && clienteUpdateValido(uid);
+    }
+    function clienteNuevoValido(uid){
+      let d = request.resource.data;
+      return d.uid == uid && d.saldo == 0
+        && d.nombre is string && d.telefono is string
+        && d.keys().hasOnly(['uid', 'email', 'nombre', 'telefono', 'saldo', 'creado', 'actualizado']);
+    }
+    function clienteUpdateValido(uid){
+      let antes = resource.data;
+      let d = request.resource.data;
+      let cambios = d.diff(antes).affectedKeys();
+      return d.uid == uid && d.saldo is int && d.saldo >= 0
+        && cambios.hasOnly(['nombre', 'telefono', 'email', 'actualizado', 'saldo', 'ultimaReserva', 'ultimaCancelacion'])
+        && (
+          // edición de perfil: el saldo no cambia
+          (d.saldo == antes.saldo && !cambios.hasAny(['ultimaReserva', 'ultimaCancelacion']))
+          // reserva: −1 clase, ligada a la reserva que se confirma en este lote
+          || (d.saldo == antes.saldo - 1 && !cambios.hasAny(['nombre', 'telefono', 'ultimaCancelacion'])
+              && reservaConfirmadaEnLote(d.ultimaReserva, uid))
+          // cancelación a tiempo: +1 clase, ligada a la reserva que se cancela en este lote
+          || (d.saldo == antes.saldo + 1 && !cambios.hasAny(['nombre', 'telefono', 'ultimaReserva'])
+              && reservaCanceladaEnLote(d.ultimaCancelacion, uid))
+        );
+    }
+
+    // ---------- reservas ----------
+    match /reservas/{rid} {
+      // get: la propia reserva (aunque todavía no exista: la transacción de reservar la consulta primero)
+      allow get: if isAdmin() || (signedIn() && (
+        (resource == null && rid.split('_')[0] == request.auth.uid) || (resource != null && resource.data.uid == request.auth.uid)));
+      allow list: if isAdmin() || (signedIn() && resource.data.uid == request.auth.uid);
+      allow write: if isAdmin();
+      allow create: if signedIn() && reservaValida(rid);
+      allow update: if signedIn() && (reactivacionValida(rid) || cancelacionValida());
+    }
+    function reservaValida(rid){
+      let d = request.resource.data;
+      return d.uid == request.auth.uid
+        && fechaValida(d.fecha) && d.horaKey in horariosValidos()
+        && rid == d.uid + '_' + d.fecha + '_' + d.horaKey
+        && d.estado == 'confirmada'
+        && d.inicio == inicioDe(d.fecha, d.horaKey)
+        && d.limiteCancelacion == limiteDe(d.fecha)
+        && request.time < d.inicio
+        && d.nombre is string && d.telefono is string
+        && d.keys().hasOnly(['uid', 'nombre', 'telefono', 'email', 'fecha', 'hora', 'horaKey', 'inicio', 'limiteCancelacion', 'estado', 'creado', 'devuelta'])
+        // en el mismo lote: cupo +1 (sin pasar del máximo) y saldo −1 (sin quedar negativo)
+        && nDespues(cupoPath(d.fecha, d.horaKey)) == nAntes(cupoPath(d.fecha, d.horaKey)) + 1
+        && nDespues(cupoPath(d.fecha, d.horaKey)) <= cupoMax()
+        && saldoDespues(d.uid) == saldoAntes(d.uid) - 1
+        && saldoDespues(d.uid) >= 0;
+    }
+    // volver a apartar la misma clase después de haberla cancelado
+    function reactivacionValida(rid){
+      return resource.data.uid == request.auth.uid && resource.data.estado == 'cancelada' && reservaValida(rid);
+    }
+    function cancelacionValida(){
+      let antes = resource.data;
+      let d = request.resource.data;
+      return antes.uid == request.auth.uid
+        && antes.estado == 'confirmada' && d.estado == 'cancelada' && d.devuelta == true
+        && request.time < antes.limiteCancelacion
+        && d.diff(antes).affectedKeys().hasOnly(['estado', 'cancelada', 'devuelta'])
+        && nDespues(cupoPath(antes.fecha, antes.horaKey)) == nAntes(cupoPath(antes.fecha, antes.horaKey)) - 1
+        && saldoDespues(antes.uid) == saldoAntes(antes.uid) + 1;
+    }
+
+    // ---------- compras (pagos anticipados) ----------
+    match /compras/{id} {
+      allow read: if isAdmin() || (signedIn() && resource.data.uid == request.auth.uid);
+      allow create: if signedIn()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.estado == 'pendiente'
+        && request.resource.data.clases is int && request.resource.data.clases > 0
+        && request.resource.data.monto is number && request.resource.data.monto > 0
+        && request.resource.data.keys().hasOnly(['ref', 'uid', 'nombre', 'telefono', 'email', 'paqueteId', 'paqueteNombre', 'clases', 'monto', 'estado', 'creado']);
+      allow update, delete: if isAdmin();
+      // el admin también puede crear compras (pago en efectivo)
+      allow create: if isAdmin();
+    }
+
+    // ---------- ajustes manuales de saldo (bitácora) ----------
+    match /ajustes/{id} {
+      allow read, write: if isAdmin();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
