@@ -503,7 +503,7 @@
           <button id="cal-next" aria-label="Semana siguiente">›</button>
         </div>
       </div>
-      <p class="cal-note" id="cal-note">Elige un horario disponible. Necesitas clases en tu saldo para reservar; entra con tu cuenta de Google.</p>
+      <p class="cal-note" id="cal-note">Elige tu horario y pícale. Si todavía no tienes clases pagadas, ahí mismo te decimos cómo pagar y te apartamos el lugar en cuanto confirmemos tu pago.</p>
       <div class="cal-scroll"><div id="cal-grid" class="cal-grid"></div></div>
       <div id="cal-cargando" class="cargando" hidden>Cargando disponibilidad…</div>
       <div class="cal-leyenda">
@@ -527,7 +527,7 @@
       <p class="eyebrow">Paquetes y pagos</p>
       <div class="divider"><span class="star">✦</span></div>
       <h2>Elige tu paquete</h2>
-      <p class="intro">Compra tus clases, envíanos tu comprobante y reserva desde el calendario.</p>
+      <p class="intro">Compra tus clases, envíanos tu comprobante y reserva desde el calendario. O más fácil: elige tu horario en el calendario y ahí mismo pagas.</p>
     </div>
     <div class="paquetes" id="paquetes-grid"></div>
     <div class="pasos">
@@ -655,9 +655,9 @@
   <div class="modal conf-center">
     <button class="x" data-cierra="m-sinsaldo">×</button>
     <div class="conf-star">✦</div>
-    <h3>Necesitas clases en tu saldo</h3>
-    <p class="sub" style="margin-top:10px" id="ss-txt">Compra un paquete y, en cuanto confirmemos tu pago, podrás reservar este horario.</p>
-    <a class="btn solid" href="#paquetes" data-cierra="m-sinsaldo" style="width:auto">Ver paquetes</a>
+    <h3>Elige tu paquete</h3>
+    <p class="sub" style="margin-top:10px" id="ss-txt">Compra un paquete y, en cuanto confirmemos tu pago, te apartamos este horario.</p>
+    <div id="ss-paquetes"></div>
   </div>
 </div>
 
@@ -697,6 +697,7 @@
     <button class="x" data-cierra="m-pago">×</button>
     <h3>Completa tu pago</h3>
     <p class="sub" id="pg-sub">—</p>
+    <div class="pago-bloque" id="pg-deseo" style="text-align:center;border-color:var(--oro)" hidden></div>
     <div class="pago-bloque" style="text-align:center">
       <h4>Tu referencia de pago</h4>
       <div class="ref-grande" id="pg-ref">—</div>
@@ -709,7 +710,7 @@
       <p class="fine" style="margin:0 0 10px">Mándanos la captura de tu pago por WhatsApp. En cuanto lo confirmemos, tus clases aparecen en tu saldo.</p>
       <a class="btn solid" id="pg-wa" href="#" target="_blank" rel="noopener" style="width:100%">Enviar comprobante por WhatsApp</a>
     </div>
-    <p class="fine">Tu compra queda registrada como <strong>pendiente de pago</strong> en “Mi cuenta”. Si necesitas ayuda, escríbenos.</p>
+    <p class="fine" id="pg-final">Tu compra queda registrada como <strong>pendiente de pago</strong> en “Mi cuenta”. Si necesitas ayuda, escríbenos.</p>
   </div>
 </div>
 
@@ -892,9 +893,27 @@ const paqueteDe = id => PAQUETES.find(p => p.id === id);
    misReservas(uid) -> [reserva]      misCompras(uid) -> [compra]
    reservar(user, iso, ho) -> {ok,saldo} | {error}
    cancelar(user, reserva) -> {ok} | {error}
-   crearCompra(user, cliente, paquete) -> {ok, compra} | {error}
-   admin*: comprasPendientes, comprasRecientes, confirmarCompra, rechazarCompra,
-           reservasDelDia, cancelarReserva, clientes, ajustarSaldo, pagoEfectivo */
+   crearCompra(user, cliente, paquete, deseo) -> {ok, compra} | {error}
+     deseo = {fecha, horaKey, hora} = la clase que quería apartar cuando le faltó saldo
+   actualizarDeseo(user, compra, deseo) -> {ok} | {error}
+   admin*: comprasPendientes, comprasRecientes, confirmarCompra (aparta el deseo si se puede),
+           rechazarCompra, reservasDelDia, cancelarReserva, clientes, ajustarSaldo, pagoEfectivo */
+
+/* Estado de la clase deseada al momento de confirmar el pago: "ok" si se puede apartar. */
+function evaluarDeseo(deseo, n, reservaPrev){
+  if (!deseo || !deseo.fecha || !deseo.horaKey) return "sin_deseo";
+  const ho = horarioDeKey(deseo.horaKey);
+  if (!ho) return "invalido";
+  if (inicioClase(deseo.fecha, ho).getTime() <= Date.now()) return "pasada";
+  if (reservaPrev && reservaPrev.estado === "confirmada") return "duplicada";
+  if ((n || 0) >= CONFIG.cupoPorClase) return "lleno";
+  return "ok";
+}
+function deseoTxt(d){
+  if (!d || !d.fecha) return "";
+  const ho = horarioDeKey(d.horaKey);
+  return `${fmtHumana(fechaDeISO(d.fecha))} · ${ho ? fmtHorario(ho) : d.hora || ""}`;
+}
 
 const DEMO = !FIREBASE_CONFIG || new URLSearchParams(location.search).has("demo");
 
@@ -949,20 +968,39 @@ function backendDemo(){
       db.clientes[u.uid].saldo += 1;
       return { ok: true };
     },
-    async crearCompra(u, c, p){
+    async crearCompra(u, c, p, deseo){
       const id = "demo" + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
       const compra = { id, ref: refCorta(id), uid: u.uid, nombre: c.nombre, telefono: c.telefono, email: u.email,
         paqueteId: p.id, paqueteNombre: p.nombre, clases: p.clases, monto: p.precio, estado: "pendiente", creado: ahora() };
+      if (deseo) compra.deseo = deseo;
       db.compras[id] = compra;
       return { ok: true, compra };
+    },
+    async actualizarDeseo(u, c, deseo){
+      if (!db.compras[c.id] || db.compras[c.id].estado !== "pendiente") return { error: "Esta compra ya fue procesada." };
+      db.compras[c.id] = { ...db.compras[c.id], deseo, actualizado: ahora() };
+      return { ok: true };
     },
     /* admin */
     async adminComprasPendientes(){ return Object.values(db.compras).filter(c => c.estado === "pendiente"); },
     async adminComprasRecientes(){ return Object.values(db.compras).filter(c => c.estado !== "pendiente").slice(-20); },
     async adminConfirmarCompra(c, quien){
-      db.compras[c.id] = { ...c, estado: "pagada", confirmada: ahora(), confirmadaPor: quien };
-      const cl = db.clientes[c.uid]; if (cl) cl.saldo += c.clases;
-      return { ok: true };
+      const cl = db.clientes[c.uid];
+      if (!cl) return { error: "Este cliente no tiene perfil; pídele que entre a la página y complete sus datos." };
+      let saldo = cl.saldo + c.clases, reservada = null;
+      const d = c.deseo, k = d ? `${d.fecha}_${d.horaKey}` : null, rid = k ? `${c.uid}_${k}` : null;
+      const estadoDeseo = evaluarDeseo(d, k ? db.cupos[k] : 0, rid ? db.reservas[rid] : null);
+      if (estadoDeseo === "ok"){
+        const ho = horarioDeKey(d.horaKey);
+        db.cupos[k] = (db.cupos[k] || 0) + 1;
+        saldo -= 1;
+        db.reservas[rid] = { id: rid, uid: c.uid, nombre: cl.nombre, telefono: cl.telefono, email: cl.email, fecha: d.fecha, hora: horaTxt(ho), horaKey: d.horaKey,
+          inicio: inicioClase(d.fecha, ho), limiteCancelacion: limiteCancelacion(d.fecha), estado: "confirmada", creado: ahora(), porCompra: c.id };
+        reservada = { fecha: d.fecha, horaKey: d.horaKey };
+      }
+      cl.saldo = saldo;
+      db.compras[c.id] = { ...c, estado: "pagada", confirmada: ahora(), confirmadaPor: quien, reservaAuto: reservada ? rid : null, deseoEstado: estadoDeseo };
+      return { ok: true, reservada, deseoEstado: estadoDeseo };
     },
     async adminRechazarCompra(c, quien){ db.compras[c.id] = { ...c, estado: "rechazada", confirmada: ahora(), confirmadaPor: quien }; return { ok: true }; },
     async adminReservasDelDia(f){ return Object.values(db.reservas).filter(r => r.fecha === f); },
@@ -1123,13 +1161,21 @@ function backendFirebase(cfg){
         return { error: errorMsg(e, "No se pudo cancelar. Intenta de nuevo.") };
       }
     },
-    async crearCompra(u, c, p){
+    async crearCompra(u, c, p, deseo){
       const { fsM } = await init();
       const ref = fsM.doc(fsM.collection(db, "compras"));
       const compra = { ref: refCorta(ref.id), uid: u.uid, nombre: c.nombre, telefono: c.telefono, email: u.email,
         paqueteId: p.id, paqueteNombre: p.nombre, clases: p.clases, monto: p.precio, estado: "pendiente", creado: fsM.serverTimestamp() };
+      if (deseo) compra.deseo = { fecha: deseo.fecha, horaKey: deseo.horaKey, hora: deseo.hora };
       try { await fsM.setDoc(ref, compra); return { ok: true, compra: { ...compra, id: ref.id, creado: new Date() } }; }
       catch (e){ return { error: errorMsg(e, "No se pudo registrar la compra.") }; }
+    },
+    async actualizarDeseo(u, c, deseo){
+      const { fsM } = await init();
+      try {
+        await fsM.updateDoc(fsM.doc(db, "compras", c.id), { deseo: { fecha: deseo.fecha, horaKey: deseo.horaKey, hora: deseo.hora }, actualizado: fsM.serverTimestamp() });
+        return { ok: true };
+      } catch (e){ return { error: errorMsg(e, "No se pudo actualizar la compra.") }; }
     },
     /* ---- admin ---- */
     async adminComprasPendientes(){
@@ -1148,14 +1194,45 @@ function backendFirebase(cfg){
       const { fsM } = await init();
       const comRef = fsM.doc(db, "compras", c.id), cliRef = fsM.doc(db, "clientes", c.uid);
       try {
+        let reservada = null, estadoDeseo = "sin_deseo";
         await fsM.runTransaction(db, async tx => {
           const [cs, cl] = await Promise.all([tx.get(comRef), tx.get(cliRef)]);
           if (!cs.exists() || cs.data().estado !== "pendiente") throw new Error("ya_procesada");
           if (!cl.exists()) throw new Error("sin_cliente");
-          tx.update(comRef, { estado: "pagada", confirmada: fsM.serverTimestamp(), confirmadaPor: quien });
-          tx.update(cliRef, { saldo: (cl.data().saldo || 0) + (cs.data().clases || 0), actualizado: fsM.serverTimestamp() });
+          const compra = cs.data(), cliente = cl.data();
+          let saldo = (cliente.saldo || 0) + (compra.clases || 0);
+          // Si la compra nació desde el calendario, apartamos esa clase en el mismo movimiento (todas las lecturas antes de escribir).
+          const d = compra.deseo || null;
+          const k = d && d.fecha && d.horaKey ? `${d.fecha}_${d.horaKey}` : null;
+          const rid = k ? `${c.uid}_${k}` : null;
+          let cupoRef = null, resRef = null, n = 0, resPrev = null;
+          if (k){
+            cupoRef = fsM.doc(db, "cupos", k); resRef = fsM.doc(db, "reservas", rid);
+            const [cup, res] = await Promise.all([tx.get(cupoRef), tx.get(resRef)]);
+            n = cup.exists() ? (cup.data().n || 0) : 0;
+            resPrev = res.exists() ? res.data() : null;
+          }
+          estadoDeseo = evaluarDeseo(d, n, resPrev);
+          const cliUpd = { actualizado: fsM.serverTimestamp() };
+          if (estadoDeseo === "ok"){
+            const ho = horarioDeKey(d.horaKey);
+            saldo -= 1;
+            tx.set(cupoRef, { n: n + 1, fecha: d.fecha, hora: horaTxt(ho) }, { merge: true });
+            tx.set(resRef, {
+              uid: c.uid, nombre: cliente.nombre || compra.nombre || "", telefono: cliente.telefono || compra.telefono || "", email: cliente.email || compra.email || "",
+              fecha: d.fecha, hora: horaTxt(ho), horaKey: d.horaKey,
+              inicio: fsM.Timestamp.fromDate(inicioClase(d.fecha, ho)),
+              limiteCancelacion: fsM.Timestamp.fromDate(limiteCancelacion(d.fecha)),
+              estado: "confirmada", creado: fsM.serverTimestamp(), devuelta: false, porCompra: c.id, apartadaPor: quien,
+            });
+            cliUpd.ultimaReserva = rid;
+            reservada = { fecha: d.fecha, horaKey: d.horaKey };
+          }
+          cliUpd.saldo = saldo;
+          tx.update(comRef, { estado: "pagada", confirmada: fsM.serverTimestamp(), confirmadaPor: quien, reservaAuto: reservada ? rid : null, deseoEstado: estadoDeseo });
+          tx.update(cliRef, cliUpd);
         });
-        return { ok: true };
+        return { ok: true, reservada, deseoEstado: estadoDeseo };
       } catch (e){
         if (String(e.message) === "ya_procesada") return { error: "Esta compra ya fue procesada." };
         if (String(e.message) === "sin_cliente") return { error: "Este cliente no tiene perfil; pídele que entre a la página y complete sus datos." };
@@ -1470,10 +1547,7 @@ function intentarReservar(iso, humana, ho){
   sel = { iso, humana, ho };
   conSesion(() => {
     const saldo = cliente ? (cliente.saldo || 0) : 0;
-    if (saldo < 1){
-      $("ss-txt").innerHTML = `Para apartar el <strong>${esc(humana)}</strong> a las <strong>${fmtHorario(ho)}</strong> necesitas al menos 1 clase en tu saldo. Compra un paquete y, en cuanto confirmemos tu pago, podrás reservar.`;
-      abrir("m-sinsaldo"); return;
-    }
+    if (saldo < 1){ pagarParaApartar(sel); return; }
     $("r-fecha").textContent = humana;
     $("r-hora").textContent = fmtRango(ho);
     $("r-saldo-txt").innerHTML = `Se descontará <strong>1 clase</strong> de tu saldo. Te quedarán <strong>${saldo - 1}</strong>.`;
@@ -1490,7 +1564,7 @@ $("r-btn").addEventListener("click", async () => {
   const r = await backend.reservar(user, sel.iso, sel.ho);
   $("r-btn").disabled = false;
   if (r.error === "lleno"){ setMsg("r-msg", "Ese horario se acaba de llenar. Elige otro, por favor.", "err"); pintarSemana(); return; }
-  if (r.error === "sin_saldo"){ cerrar("m-reserva"); await refrescarCliente(); abrir("m-sinsaldo"); return; }
+  if (r.error === "sin_saldo"){ cerrar("m-reserva"); await refrescarCliente(); pagarParaApartar(sel); return; }
   if (r.error === "duplicada"){ setMsg("r-msg", "Ya tienes lugar en esta clase.", "err"); return; }
   if (r.error){ setMsg("r-msg", r.error, "err"); return; }
   cerrar("m-reserva");
@@ -1534,20 +1608,69 @@ $("c-btn").addEventListener("click", async () => {
 });
 
 /* ================== COMPRA / PAGO ================== */
+/* Compra pendiente (sin pagar) más reciente del cliente, para no duplicar solicitudes. */
+async function compraPendiente(paqId){
+  let cs = [];
+  try { cs = await backend.misCompras(user.uid); } catch (e){ console.error(e); }
+  return cs.filter(c => c.estado === "pendiente" && (!paqId || c.paqueteId === paqId))
+    .sort((a, b) => (b.creado || 0) - (a.creado || 0))[0] || null;
+}
+
+/* Botón "Comprar" de la sección Paquetes. */
 function iniciarCompra(paqId){
   const p = paqueteDe(paqId); if (!p) return;
   paqueteSel = p;
   conSesion(async () => {
-    const r = await backend.crearCompra(user, cliente, p);
+    const prev = await compraPendiente(p.id);
+    if (prev){ mostrarPago(prev); return; }
+    const r = await backend.crearCompra(user, cliente, p, null);
     if (r.error){ $("conf-tit").textContent = "No se pudo registrar"; $("conf-txt").textContent = r.error; abrir("m-conf"); return; }
     mostrarPago(r.compra);
   }, "Entra con Google para comprar tus clases.");
+}
+
+/* Quiso apartar una clase sin saldo: le mostramos de una vez cómo pagar,
+   recordando la clase para apartársela en cuanto se confirme el pago. */
+function pagarParaApartar(s, paqId){
+  if (!s || !user) return;
+  const deseo = { fecha: s.iso, horaKey: keyHora(s.ho), hora: horaTxt(s.ho) };
+  const p = paqId ? paqueteDe(paqId) : (PAQUETES.length === 1 ? PAQUETES[0] : null);
+  if (!p){ elegirPaquetePara(s); return; }
+  (async () => {
+    const prev = await compraPendiente(null);
+    if (prev){
+      const u = await backend.actualizarDeseo(user, prev, deseo);
+      mostrarPago({ ...prev, deseo: u.error ? prev.deseo : deseo });
+      return;
+    }
+    const r = await backend.crearCompra(user, cliente, p, deseo);
+    if (r.error){ $("conf-tit").textContent = "No se pudo registrar"; $("conf-txt").textContent = r.error; abrir("m-conf"); return; }
+    mostrarPago(r.compra);
+  })();
+}
+
+/* Varios paquetes: que escoja cuál pagar para esa clase. */
+function elegirPaquetePara(s){
+  $("ss-txt").innerHTML = `Para apartar el <strong>${esc(s.humana)}</strong> a las <strong>${fmtHorario(s.ho)}</strong> elige tu paquete. En cuanto confirmemos tu pago, te dejamos apartado ese lugar.`;
+  $("ss-paquetes").innerHTML = PAQUETES.map(p => `<button class="btn solid full" type="button" data-paq="${esc(p.id)}" style="margin-top:8px">${esc(p.nombre)} · ${dinero(p.precio)} MXN</button>`).join("");
+  $("ss-paquetes").querySelectorAll("[data-paq]").forEach(b => b.addEventListener("click", () => { cerrar("m-sinsaldo"); pagarParaApartar(s, b.dataset.paq); }));
+  abrir("m-sinsaldo");
 }
 
 function mostrarPago(compra){
   const p = paqueteDe(compra.paqueteId) || { nombre: compra.paqueteNombre, mercadoPago: "" };
   $("pg-sub").innerHTML = `Paquete <strong>${esc(compra.paqueteNombre)}</strong> · <strong>${dinero(compra.monto)} MXN</strong>`;
   $("pg-ref").textContent = compra.ref;
+  const d = compra.deseo;
+  $("pg-deseo").hidden = !d;
+  if (d){
+    $("pg-deseo").innerHTML = `<h4>Tu lugar</h4>
+      <div class="ref-grande" style="font-size:1.25rem;letter-spacing:.04em">${esc(deseoTxt(d))}</div>
+      <p class="fine" style="margin-top:0">Paga, mándanos tu comprobante y <strong>en cuanto lo confirmemos te apartamos este lugar</strong>. Lo verás en “Mi cuenta”.</p>`;
+  }
+  $("pg-final").innerHTML = d
+    ? `Tu solicitud queda en “Mi cuenta” como <strong>pendiente de pago</strong>. Si al confirmar tu pago ese horario ya se llenó, la clase queda en tu saldo para que elijas otro. ¿Dudas? Escríbenos.`
+    : `Tu compra queda registrada como <strong>pendiente de pago</strong> en “Mi cuenta”. Si necesitas ayuda, escríbenos.`;
   const t = PAGO.transferencia;
   if (t && t.clabe){
     $("pg-transfer").innerHTML = `
@@ -1574,7 +1697,8 @@ function mostrarPago(compra){
         <a class="btn" href="${esc(p.mercadoPago)}" target="_blank" rel="noopener" style="width:100%">Pagar con Mercado Pago</a>
       </div>`
     : "";
-  const txt = `Hola, soy ${cliente ? cliente.nombre : ""}. Compré el paquete "${compra.paqueteNombre}" (${dinero(compra.monto)} MXN), referencia ${compra.ref}. Te mando mi comprobante de pago.`;
+  const txt = `Hola, soy ${cliente ? cliente.nombre : ""}. Compré el paquete "${compra.paqueteNombre}" (${dinero(compra.monto)} MXN), referencia ${compra.ref}.`
+    + (d ? ` Es para apartar la clase del ${deseoTxt(d)} — te mando mi comprobante de pago.` : ` Te mando mi comprobante de pago.`);
   $("pg-wa").href = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(txt)}`;
   $("pg-transfer").querySelectorAll("[data-copy]").forEach(b => b.addEventListener("click", async () => {
     try { await navigator.clipboard.writeText(b.dataset.copy); b.textContent = "Copiado"; setTimeout(() => b.textContent = "Copiar", 1500); } catch (e){}
@@ -1610,8 +1734,14 @@ async function pintarCuenta(){
   }));
   cs.sort((a, b) => (b.creado || 0) - (a.creado || 0));
   const chip = e => e === "pagada" ? '<span class="chip ok">Pagada</span>' : e === "pendiente" ? '<span class="chip pend">Pendiente de pago</span>' : '<span class="chip bad">Rechazada</span>';
+  const deseoLinea = c => {
+    if (!c.deseo || !c.deseo.fecha) return "";
+    if (c.estado === "pendiente") return `<br>Para apartar: <strong>${esc(deseoTxt(c.deseo))}</strong> (en cuanto confirmemos tu pago)`;
+    if (c.estado === "pagada") return c.reservaAuto ? `<br>Lugar apartado: <strong>${esc(deseoTxt(c.deseo))}</strong>` : `<br>El horario ${esc(deseoTxt(c.deseo))} ya no estaba disponible; la clase quedó en tu saldo.`;
+    return "";
+  };
   $("cu-compras").innerHTML = cs.length ? cs.map(c => `<div class="item">
-      <div class="t">${esc(c.paqueteNombre)} · ${dinero(c.monto)} MXN <small>Ref. ${esc(c.ref)} · ${c.creado ? c.creado.toLocaleDateString("es-MX") : ""}${c.metodo === "efectivo" ? " · efectivo" : ""}</small></div>
+      <div class="t">${esc(c.paqueteNombre)} · ${dinero(c.monto)} MXN <small>Ref. ${esc(c.ref)} · ${c.creado ? c.creado.toLocaleDateString("es-MX") : ""}${c.metodo === "efectivo" ? " · efectivo" : ""}${deseoLinea(c)}</small></div>
       <div style="display:flex;gap:8px;align-items:center">${chip(c.estado)}${c.estado === "pendiente" ? `<button class="linklike" type="button" data-pagar="${esc(c.id)}">Ver cómo pagar</button>` : ""}</div>
     </div>`).join("") : '<div class="vacio">Aún no has comprado clases.</div>';
   $("cu-compras").querySelectorAll("[data-pagar]").forEach(b => b.addEventListener("click", () => {
@@ -1660,7 +1790,7 @@ async function pintarPagos(){
   const fila = c => `<tr>
       <td class="h">${esc(c.ref)}</td>
       <td>${esc(c.nombre)}<br><small>${esc(c.telefono || "")}${c.telefono ? ` · <a href="https://wa.me/52${esc(c.telefono)}" target="_blank" rel="noopener" style="color:var(--oro-suave)">WhatsApp</a>` : ""}</small></td>
-      <td>${esc(c.paqueteNombre)} (${c.clases})</td>
+      <td>${esc(c.paqueteNombre)} (${c.clases})${c.deseo && c.deseo.fecha ? `<br><small>Quiere: <strong>${esc(deseoTxt(c.deseo))}</strong></small>` : ""}</td>
       <td>${dinero(c.monto)}</td>
       <td>${c.creado ? c.creado.toLocaleString("es-MX", { dateStyle: "short", timeStyle: "short" }) : ""}</td>
       <td style="white-space:nowrap"><button class="btn small solid" type="button" data-conf="${esc(c.id)}">Confirmar pago</button> <button class="linklike rojo" type="button" data-rech="${esc(c.id)}">Rechazar</button></td>
@@ -1668,12 +1798,16 @@ async function pintarPagos(){
   out.innerHTML = pend.length
     ? `<div class="tabla-scroll"><table class="adm-tabla"><thead><tr><th>Ref.</th><th>Cliente</th><th>Paquete</th><th>Monto</th><th>Solicitud</th><th></th></tr></thead><tbody>${pend.map(fila).join("")}</tbody></table></div>`
     : '<p class="adm-vacio">No hay pagos pendientes.</p>';
+  const MOTIVO = { lleno: "ese horario ya está lleno", pasada: "esa clase ya pasó", duplicada: "ya tenía lugar en esa clase", invalido: "el horario ya no existe" };
   out.querySelectorAll("[data-conf]").forEach(b => b.addEventListener("click", async () => {
     const c = pend.find(x => x.id === b.dataset.conf); if (!c) return;
     b.disabled = true;
     const r = await backend.adminConfirmarCompra(c, user.email);
     if (r.error){ setMsg("adm-msg", r.error, "err"); b.disabled = false; return; }
-    setMsg("adm-msg", `Pago de ${c.nombre} confirmado: +${c.clases} clase${c.clases === 1 ? "" : "s"}.`, "ok");
+    let msg = `Pago de ${c.nombre} confirmado: +${c.clases} clase${c.clases === 1 ? "" : "s"}.`;
+    if (r.reservada) msg += ` Lugar apartado: ${deseoTxt(r.reservada)} (ya se descontó de su saldo).`;
+    else if (c.deseo && c.deseo.fecha) msg += ` No se pudo apartar el ${deseoTxt(c.deseo)}: ${MOTIVO[r.deseoEstado] || "no disponible"}. La clase quedó en su saldo; avísale por WhatsApp para que elija otro horario.`;
+    setMsg("adm-msg", msg, r.reservada || !(c.deseo && c.deseo.fecha) ? "ok" : "info");
     pintarPagos();
   }));
   out.querySelectorAll("[data-rech]").forEach(b => b.addEventListener("click", async () => {
