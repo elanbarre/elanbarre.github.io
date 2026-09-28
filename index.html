@@ -368,6 +368,14 @@
   .tabla-scroll{overflow-x:auto}
   .buscar{margin-bottom:12px}
   .demo-banner{position:fixed;bottom:0;left:0;right:0;z-index:60;background:var(--aviso);color:#fff;text-align:center;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;padding:6px}
+  .opciones{display:flex;gap:8px;margin-top:6px}
+  .modal .op{display:flex;align-items:center;justify-content:center;gap:7px;flex:1;margin:0;padding:9px 10px;
+    border:1px solid var(--beige-med);background:var(--blanco);cursor:pointer;font-size:.9rem;
+    text-transform:none;letter-spacing:0;color:var(--tinta)}
+  .modal .op input{width:auto;margin:0;accent-color:var(--oro-suave)}
+  .modal .op.on{border-color:var(--oro-suave);background:#fbf5e6}
+  .modal input.det{margin-top:8px}
+  .salud-tag{display:inline-block;font-size:.72rem;color:var(--error);margin-top:2px}
   [hidden]{display:none!important}
 </style>
 </head>
@@ -462,7 +470,7 @@
       </div>
     </div>
     <div class="reglas">
-      <div class="regla"><h4>Cupo</h4><p id="regla-cupo">Máximo 10 alumnas por clase. Llega 10 minutos antes.</p></div>
+      <div class="regla"><h4>Cupo</h4><p id="regla-cupo">Máximo 10 alumnos(as) por clase. Llega 10 minutos antes.</p></div>
       <div class="regla"><h4>Cancelaciones</h4><p>Puedes cancelar hasta las <strong>10:00 a. m. del día anterior</strong> a tu clase y la clase regresa a tu saldo para usarla después. Después de esa hora la clase se considera tomada.</p></div>
       <div class="regla"><h4>Pago anticipado</h4><p>Las clases se pagan por adelantado. En cuanto confirmemos tu pago, aparecen en tu saldo y puedes reservar.</p></div>
     </div>
@@ -552,8 +560,30 @@
       <input id="p-nombre" type="text" required maxlength="60" autocomplete="name" placeholder="Tu nombre">
       <label for="p-tel">Teléfono / WhatsApp (10 dígitos)</label>
       <input id="p-tel" type="tel" required pattern="[0-9]{10}" maxlength="10" inputmode="numeric" autocomplete="tel" placeholder="4771234567">
+
+      <label>¿Tienes alguna lesión?</label>
+      <div class="opciones" data-grupo="lesion">
+        <label class="op"><input type="radio" name="p-lesion" value="si"> Sí</label>
+        <label class="op"><input type="radio" name="p-lesion" value="no"> No</label>
+      </div>
+      <input id="p-lesion-det" class="det" type="text" maxlength="120" placeholder="¿Cuál? (p. ej. rodilla, espalda baja)" hidden>
+
+      <label>¿Estás embarazada?</label>
+      <div class="opciones" data-grupo="embarazo">
+        <label class="op"><input type="radio" name="p-embarazo" value="si"> Sí</label>
+        <label class="op"><input type="radio" name="p-embarazo" value="no"> No</label>
+      </div>
+
+      <label>¿Alguna otra condición que debamos saber?</label>
+      <div class="opciones" data-grupo="otros">
+        <label class="op"><input type="radio" name="p-otros" value="si"> Sí</label>
+        <label class="op"><input type="radio" name="p-otros" value="no"> No</label>
+      </div>
+      <input id="p-otros-det" class="det" type="text" maxlength="160" placeholder="¿Qué? (p. ej. presión alta, cirugía reciente)" hidden>
+
       <button class="btn solid full" type="submit" id="p-btn">Guardar</button>
       <div class="msg" id="p-msg"></div>
+      <p class="fine">Esta información es confidencial: solo la ve el equipo de Elan Barre para cuidarte durante la clase.</p>
     </form>
   </div>
 </div>
@@ -675,7 +705,7 @@
     <div class="tabs">
       <button class="tab on" data-tab="pagos">Pagos <span id="adm-npend"></span></button>
       <button class="tab" data-tab="clases">Clases del día</button>
-      <button class="tab" data-tab="clientas">Clientas</button>
+      <button class="tab" data-tab="clientas">Clientes</button>
     </div>
 
     <div id="tab-pagos">
@@ -695,7 +725,7 @@
     </div>
 
     <div id="tab-clientas" hidden>
-      <p class="sub">Saldo por clienta, ajustes manuales y pagos en efectivo.</p>
+      <p class="sub">Saldo por cliente, observaciones de salud, ajustes manuales y pagos en efectivo.</p>
       <input type="text" class="buscar" id="adm-buscar" placeholder="Buscar por nombre, teléfono o correo…">
       <div id="adm-clientas"></div>
     </div>
@@ -835,7 +865,7 @@ function backendDemo(){
     async login(opts){
       user = (admin || (opts && opts.admin))
         ? { uid: "demo-admin", email: ADMINS[0], nombre: "Admin Demo" }
-        : { uid: "demo-cliente", email: "clienta@demo.mx", nombre: "Clienta Demo" };
+        : { uid: "demo-cliente", email: "cliente@demo.mx", nombre: "Cliente Demo" };
       emit();
       return { ok: true, user };
     },
@@ -900,7 +930,7 @@ function backendDemo(){
     },
     async adminClientes(){ return Object.values(db.clientes); },
     async adminAjustarSaldo(uid, delta, motivo, quien){
-      const cl = db.clientes[uid]; if (!cl) return { error: "No existe la clienta." };
+      const cl = db.clientes[uid]; if (!cl) return { error: "No existe ese cliente." };
       cl.saldo = Math.max(0, cl.saldo + delta);
       db.ajustes.push({ uid, delta, motivo, quien, fecha: ahora() });
       return { ok: true };
@@ -969,9 +999,9 @@ function backendFirebase(cfg){
       try {
         const s = await fsM.getDoc(ref);
         if (s.exists()){
-          await fsM.updateDoc(ref, { nombre: datos.nombre, telefono: datos.telefono, email: u.email, actualizado: fsM.serverTimestamp() });
+          await fsM.updateDoc(ref, { nombre: datos.nombre, telefono: datos.telefono, salud: datos.salud, email: u.email, actualizado: fsM.serverTimestamp() });
         } else {
-          await fsM.setDoc(ref, { uid: u.uid, email: u.email, nombre: datos.nombre, telefono: datos.telefono, saldo: 0, creado: fsM.serverTimestamp(), actualizado: fsM.serverTimestamp() });
+          await fsM.setDoc(ref, { uid: u.uid, email: u.email, nombre: datos.nombre, telefono: datos.telefono, salud: datos.salud, saldo: 0, creado: fsM.serverTimestamp(), actualizado: fsM.serverTimestamp() });
         }
         return { ok: true };
       } catch (e){ return { error: errorMsg(e, "No se pudo guardar tu perfil.") }; }
@@ -1083,7 +1113,7 @@ function backendFirebase(cfg){
         return { ok: true };
       } catch (e){
         if (String(e.message) === "ya_procesada") return { error: "Esta compra ya fue procesada." };
-        if (String(e.message) === "sin_cliente") return { error: "La clienta no tiene perfil; pídele que entre a la página y complete sus datos." };
+        if (String(e.message) === "sin_cliente") return { error: "Este cliente no tiene perfil; pídele que entre a la página y complete sus datos." };
         return { error: errorMsg(e, "No se pudo confirmar.") };
       }
     },
@@ -1127,7 +1157,7 @@ function backendFirebase(cfg){
       try {
         await fsM.runTransaction(db, async tx => {
           const cl = await tx.get(cliRef);
-          if (!cl.exists()) throw new Error("No existe la clienta.");
+          if (!cl.exists()) throw new Error("No existe ese cliente.");
           const nuevo = Math.max(0, (cl.data().saldo || 0) + delta);
           tx.update(cliRef, { saldo: nuevo, actualizado: fsM.serverTimestamp() });
           tx.set(ajRef, { uid, delta, saldoNuevo: nuevo, motivo, quien, fecha: fsM.serverTimestamp() });
@@ -1141,7 +1171,7 @@ function backendFirebase(cfg){
       try {
         await fsM.runTransaction(db, async tx => {
           const c = await tx.get(cliRef);
-          if (!c.exists()) throw new Error("No existe la clienta.");
+          if (!c.exists()) throw new Error("No existe ese cliente.");
           tx.set(comRef, { ref: refCorta(comRef.id), uid: cl.uid, nombre: cl.nombre, telefono: cl.telefono || "", email: cl.email || "", paqueteId: p.id, paqueteNombre: p.nombre,
             clases: p.clases, monto: p.precio, estado: "pagada", metodo: "efectivo", creado: fsM.serverTimestamp(), confirmada: fsM.serverTimestamp(), confirmadaPor: quien });
           tx.update(cliRef, { saldo: (c.data().saldo || 0) + p.clases, actualizado: fsM.serverTimestamp() });
@@ -1177,7 +1207,7 @@ const cerrar = id => { $(id).hidden = true; };
   const txt = `Clases de ${CONFIG.duracionMin} minutos · Lunes a viernes · ${am.join(" · ")}${pm.length ? " — " + pm.join(" · ") : ""}`;
   $("cal-horarios-txt").textContent = txt;
   $("contacto-horario").innerHTML = `Lunes a viernes<br>${am.join(" · ")}<br>${pm.join(" · ")}`;
-  $("regla-cupo").textContent = `Máximo ${CONFIG.cupoPorClase} alumnas por clase. Llega 10 minutos antes.`;
+  $("regla-cupo").textContent = `Máximo ${CONFIG.cupoPorClase} alumnos(as) por clase. Llega 10 minutos antes.`;
   for (const id of ["lnk-ig", "lnk-ig2"]) $(id).href = CONFIG.instagram;
   for (const id of ["lnk-fb", "lnk-fb2"]) $(id).href = CONFIG.facebook;
   $("lnk-wa2").href = `https://wa.me/${CONFIG.whatsapp}`;
@@ -1254,11 +1284,36 @@ $("l-google").addEventListener("click", async () => {
 });
 
 /* Perfil: obligatorio tener nombre y teléfono antes de comprar o reservar. */
-function perfilCompleto(){ return !!(cliente && cliente.nombre && /^[0-9]{10}$/.test(cliente.telefono || "")); }
+function saludCompleta(sa){ return !!(sa && typeof sa.lesion === "boolean" && typeof sa.embarazo === "boolean" && typeof sa.otros === "boolean"); }
+function perfilCompleto(){ return !!(cliente && cliente.nombre && /^[0-9]{10}$/.test(cliente.telefono || "") && saludCompleta(cliente.salud)); }
+/* Resumen de salud para el panel (vacío si no hay nada que observar). */
+function saludTxt(c){
+  const sa = c && c.salud; if (!sa) return "";
+  const p = [];
+  if (sa.lesion) p.push("Lesión: " + (sa.lesionDetalle || "sin detalle"));
+  if (sa.embarazo) p.push("Embarazo");
+  if (sa.otros) p.push("Otros: " + (sa.otrosDetalle || "sin detalle"));
+  return p.join(" · ");
+}
+function radioVal(name){ const el = document.querySelector(`input[name="${name}"]:checked`); return el ? el.value : null; }
+function setRadio(name, val){ document.querySelectorAll(`input[name="${name}"]`).forEach(i => { i.checked = (val === true && i.value === "si") || (val === false && i.value === "no"); }); }
+function pintarOpciones(){
+  document.querySelectorAll(".opciones .op").forEach(l => l.classList.toggle("on", l.querySelector("input").checked));
+  $("p-lesion-det").hidden = radioVal("p-lesion") !== "si";
+  $("p-otros-det").hidden = radioVal("p-otros") !== "si";
+}
+document.querySelectorAll(".opciones input").forEach(i => i.addEventListener("change", pintarOpciones));
 function pedirPerfil(luego){
   despues = luego || null;
   $("p-nombre").value = (cliente && cliente.nombre) || (user && user.nombre) || "";
   $("p-tel").value = (cliente && cliente.telefono) || "";
+  const sa = (cliente && cliente.salud) || {};
+  setRadio("p-lesion", typeof sa.lesion === "boolean" ? sa.lesion : null);
+  setRadio("p-embarazo", typeof sa.embarazo === "boolean" ? sa.embarazo : null);
+  setRadio("p-otros", typeof sa.otros === "boolean" ? sa.otros : null);
+  $("p-lesion-det").value = sa.lesionDetalle || "";
+  $("p-otros-det").value = sa.otrosDetalle || "";
+  pintarOpciones();
   setMsg("p-msg", "");
   abrir("m-perfil");
   setTimeout(() => $(($("p-nombre").value ? "p-tel" : "p-nombre")).focus(), 50);
@@ -1268,8 +1323,14 @@ $("f-perfil").addEventListener("submit", async e => {
   const nombre = $("p-nombre").value.trim(), tel = $("p-tel").value.trim();
   if (nombre.length < 3){ setMsg("p-msg", "Escribe tu nombre completo.", "err"); return; }
   if (!/^[0-9]{10}$/.test(tel)){ setMsg("p-msg", "El teléfono debe tener 10 dígitos.", "err"); return; }
+  const rl = radioVal("p-lesion"), re = radioVal("p-embarazo"), ro = radioVal("p-otros");
+  if (!rl || !re || !ro){ setMsg("p-msg", "Contesta las tres preguntas de salud, por favor.", "err"); return; }
+  const lesionDet = $("p-lesion-det").value.trim(), otrosDet = $("p-otros-det").value.trim();
+  if (rl === "si" && !lesionDet){ setMsg("p-msg", "Cuéntanos cuál es la lesión.", "err"); return; }
+  if (ro === "si" && !otrosDet){ setMsg("p-msg", "Cuéntanos qué otra condición debemos saber.", "err"); return; }
+  const salud = { lesion: rl === "si", lesionDetalle: rl === "si" ? lesionDet : "N/A", embarazo: re === "si", otros: ro === "si", otrosDetalle: ro === "si" ? otrosDet : "N/A" };
   $("p-btn").disabled = true;
-  const r = await backend.guardarPerfil(user, { nombre, telefono: tel });
+  const r = await backend.guardarPerfil(user, { nombre, telefono: tel, salud });
   $("p-btn").disabled = false;
   if (r.error){ setMsg("p-msg", r.error, "err"); return; }
   await refrescarCliente();
@@ -1516,6 +1577,7 @@ $("cu-editar").addEventListener("click", () => { cerrar("m-cuenta"); pedirPerfil
 $("cu-salir").addEventListener("click", async () => { cerrar("m-cuenta"); await backend.logout(); });
 
 /* ================== ADMIN ================== */
+let clientesCache = [];
 $("abrir-admin").addEventListener("click", () => {
   if (user && esAdmin){ abrirAdmin(); return; }
   if (user && !esAdmin){ $("conf-tit").textContent = "Sin acceso"; $("conf-txt").textContent = "Tu cuenta no tiene acceso al panel de administración."; abrir("m-conf"); return; }
@@ -1534,6 +1596,7 @@ document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () =>
 }));
 
 function abrirAdmin(){
+  clientesCache = [];
   $("adm-who").textContent = user.email;
   $("adm-fecha").value = fmtISO(new Date());
   setMsg("adm-msg", "");
@@ -1558,7 +1621,7 @@ async function pintarPagos(){
       <td style="white-space:nowrap"><button class="btn small solid" type="button" data-conf="${esc(c.id)}">Confirmar pago</button> <button class="linklike rojo" type="button" data-rech="${esc(c.id)}">Rechazar</button></td>
     </tr>`;
   out.innerHTML = pend.length
-    ? `<div class="tabla-scroll"><table class="adm-tabla"><thead><tr><th>Ref.</th><th>Clienta</th><th>Paquete</th><th>Monto</th><th>Solicitud</th><th></th></tr></thead><tbody>${pend.map(fila).join("")}</tbody></table></div>`
+    ? `<div class="tabla-scroll"><table class="adm-tabla"><thead><tr><th>Ref.</th><th>Cliente</th><th>Paquete</th><th>Monto</th><th>Solicitud</th><th></th></tr></thead><tbody>${pend.map(fila).join("")}</tbody></table></div>`
     : '<p class="adm-vacio">No hay pagos pendientes.</p>';
   out.querySelectorAll("[data-conf]").forEach(b => b.addEventListener("click", async () => {
     const c = pend.find(x => x.id === b.dataset.conf); if (!c) return;
@@ -1577,7 +1640,7 @@ async function pintarPagos(){
     pintarPagos();
   }));
   out2.innerHTML = rec.length
-    ? `<div class="tabla-scroll"><table class="adm-tabla"><thead><tr><th>Ref.</th><th>Clienta</th><th>Paquete</th><th>Monto</th><th>Estado</th><th>Confirmó</th></tr></thead><tbody>${rec.map(c => `<tr>
+    ? `<div class="tabla-scroll"><table class="adm-tabla"><thead><tr><th>Ref.</th><th>Cliente</th><th>Paquete</th><th>Monto</th><th>Estado</th><th>Confirmó</th></tr></thead><tbody>${rec.map(c => `<tr>
         <td class="h">${esc(c.ref)}</td><td>${esc(c.nombre)}</td><td>${esc(c.paqueteNombre)} (${c.clases})</td><td>${dinero(c.monto)}</td>
         <td>${c.estado === "pagada" ? '<span class="chip ok">Pagada</span>' : '<span class="chip bad">Rechazada</span>'}${c.metodo === "efectivo" ? ' <span class="chip">Efectivo</span>' : ""}</td>
         <td><small>${esc((c.confirmadaPor || "").split("@")[0])}<br>${c.confirmada ? c.confirmada.toLocaleDateString("es-MX") : ""}</small></td></tr>`).join("")}</tbody></table></div>`
@@ -1590,8 +1653,12 @@ async function verDiaAdmin(){
   const out = $("adm-out");
   out.innerHTML = '<div class="cargando">Cargando…</div>';
   let lista = [];
-  try { lista = await backend.adminReservasDelDia(f); }
+  try {
+    lista = await backend.adminReservasDelDia(f);
+    if (!clientesCache.length) clientesCache = await backend.adminClientes();
+  }
   catch (e){ out.innerHTML = '<p class="adm-vacio">No se pudieron cargar las reservas (¿sesión válida?).</p>'; return; }
+  const saludDe = uid => { const c = clientesCache.find(x => x.uid === uid); const t = saludTxt(c); return t ? `<br><span class="salud-tag">⚠ ${esc(t)}</span>` : ""; };
   const act = lista.filter(r => r.estado === "confirmada");
   const porHora = {};
   for (const r of act) (porHora[r.horaKey] = porHora[r.horaKey] || []).push(r);
@@ -1601,7 +1668,7 @@ async function verDiaAdmin(){
     if (!rs.length){ html += `<tr><td class="h">${fmtHorario(ho)}</td><td>0/${CONFIG.cupoPorClase}</td><td class="adm-vacio" colspan="3">Sin inscripciones</td></tr>`; continue; }
     rs.forEach((r, i) => {
       html += `<tr>${i === 0 ? `<td class="h" rowspan="${rs.length}">${fmtHorario(ho)}</td><td rowspan="${rs.length}">${rs.length}/${CONFIG.cupoPorClase}</td>` : ""}
-        <td>${esc(r.nombre)}</td><td>${esc(r.telefono || "")}</td>
+        <td>${esc(r.nombre)}${saludDe(r.uid)}</td><td>${esc(r.telefono || "")}</td>
         <td style="white-space:nowrap"><button class="linklike rojo" type="button" data-cx="${esc(r.id)}" data-dev="1">Cancelar y devolver clase</button><br><button class="linklike" type="button" data-cx="${esc(r.id)}" data-dev="0">Cancelar sin devolver</button></td></tr>`;
     });
   }
@@ -1619,11 +1686,10 @@ async function verDiaAdmin(){
   }));
 }
 
-let clientesCache = [];
 async function pintarClientas(){
   const out = $("adm-clientas");
   out.innerHTML = '<div class="cargando">Cargando…</div>';
-  try { clientesCache = await backend.adminClientes(); } catch (e){ out.innerHTML = '<p class="adm-vacio">No se pudieron cargar las clientas.</p>'; return; }
+  try { clientesCache = await backend.adminClientes(); } catch (e){ out.innerHTML = '<p class="adm-vacio">No se pudieron cargar los clientes.</p>'; return; }
   clientesCache.sort((a, b) => (a.nombre || "").localeCompare(b.nombre || ""));
   filtrarClientas();
 }
@@ -1632,10 +1698,10 @@ function filtrarClientas(){
   const q = $("adm-buscar").value.trim().toLowerCase();
   const lista = clientesCache.filter(c => !q || [c.nombre, c.telefono, c.email].some(v => (v || "").toLowerCase().includes(q)));
   const out = $("adm-clientas");
-  if (!lista.length){ out.innerHTML = `<p class="adm-vacio">${clientesCache.length ? "Sin resultados." : "Todavía no hay clientas registradas."}</p>`; return; }
+  if (!lista.length){ out.innerHTML = `<p class="adm-vacio">${clientesCache.length ? "Sin resultados." : "Todavía no hay clientes registrados."}</p>`; return; }
   const opts = PAQUETES.map(p => `<option value="${esc(p.id)}">${esc(p.nombre)} · ${dinero(p.precio)}</option>`).join("");
-  out.innerHTML = `<div class="tabla-scroll"><table class="adm-tabla"><thead><tr><th>Clienta</th><th>Saldo</th><th>Acciones</th></tr></thead><tbody>${lista.map(c => `<tr>
-      <td>${esc(c.nombre || "(sin nombre)")}<br><small>${esc(c.telefono || "")} · ${esc(c.email || "")}</small></td>
+  out.innerHTML = `<div class="tabla-scroll"><table class="adm-tabla"><thead><tr><th>Cliente</th><th>Saldo</th><th>Acciones</th></tr></thead><tbody>${lista.map(c => `<tr>
+      <td>${esc(c.nombre || "(sin nombre)")}<br><small>${esc(c.telefono || "")} · ${esc(c.email || "")}</small>${saludTxt(c) ? `<br><span class="salud-tag">⚠ ${esc(saludTxt(c))}</span>` : ""}</td>
       <td class="h" style="font-size:1.2rem">${c.saldo || 0}</td>
       <td>
         <div class="mini-form"><select data-efe-paq="${esc(c.uid)}">${opts}</select><button class="btn small" type="button" data-efe="${esc(c.uid)}">Registrar pago en efectivo</button></div>
