@@ -148,6 +148,11 @@ service cloud.firestore {
     }
 
     // ---------- compras (pagos anticipados) ----------
+    // deseo = la clase que quería apartar cuando le faltó saldo; el admin la aparta al confirmar el pago.
+    function deseoValido(d){
+      return d is map && d.keys().hasOnly(['fecha', 'horaKey', 'hora'])
+        && fechaValida(d.fecha) && d.horaKey in horariosValidos();
+    }
     match /compras/{id} {
       allow read: if isAdmin() || (signedIn() && resource.data.uid == request.auth.uid);
       allow create: if signedIn()
@@ -155,7 +160,13 @@ service cloud.firestore {
         && request.resource.data.estado == 'pendiente'
         && request.resource.data.clases is int && request.resource.data.clases > 0
         && request.resource.data.monto is number && request.resource.data.monto > 0
-        && request.resource.data.keys().hasOnly(['ref', 'uid', 'nombre', 'telefono', 'email', 'paqueteId', 'paqueteNombre', 'clases', 'monto', 'estado', 'creado']);
+        && (!('deseo' in request.resource.data) || deseoValido(request.resource.data.deseo))
+        && request.resource.data.keys().hasOnly(['ref', 'uid', 'nombre', 'telefono', 'email', 'paqueteId', 'paqueteNombre', 'clases', 'monto', 'estado', 'creado', 'deseo']);
+      // el dueño solo puede cambiar la clase deseada mientras la compra siga pendiente
+      allow update: if signedIn() && resource.data.uid == request.auth.uid
+        && resource.data.estado == 'pendiente'
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['deseo', 'actualizado'])
+        && deseoValido(request.resource.data.deseo);
       allow update, delete: if isAdmin();
       // el admin también puede crear compras (pago en efectivo)
       allow create: if isAdmin();
