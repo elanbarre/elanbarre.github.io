@@ -812,9 +812,9 @@ const PAQUETES = [
 /* Datos para recibir pagos. Mientras estén en null, la página pide los datos por WhatsApp. */
 const PAGO = {
   transferencia: {
-    banco: null,        // p. ej. "BBVA"
-    titular: null,      // p. ej. "Ximena Barajas"
-    clabe: null,        // 18 dígitos
+    banco: "Nu México",
+    titular: "Ximena Barajas Segura",
+    clabe: "638180010195388582",
     tarjeta: null,      // opcional: número de tarjeta para depósito
   },
 };
@@ -1555,7 +1555,7 @@ function mostrarPago(compra){
         <h4>Opción 1 · Transferencia (SPEI)</h4>
         <div class="dato"><b>Banco</b><span class="v">${esc(t.banco || "")}</span></div>
         <div class="dato"><b>Titular</b><span class="v">${esc(t.titular || "")}</span></div>
-        <div class="dato"><b>CLABE</b><span class="v">${esc(t.clabe)} <button class="copiar" type="button" data-copy="${esc(t.clabe)}">Copiar</button></span></div>
+        <div class="dato"><b>CLABE</b><span class="v">${esc(t.clabe.replace(/(\d{4})(?=\d)/g, "$1 "))} <button class="copiar" type="button" data-copy="${esc(t.clabe)}">Copiar</button></span></div>
         ${t.tarjeta ? `<div class="dato"><b>Tarjeta</b><span class="v">${esc(t.tarjeta)} <button class="copiar" type="button" data-copy="${esc(t.tarjeta)}">Copiar</button></span></div>` : ""}
         <div class="dato"><b>Monto</b><span class="v">${dinero(compra.monto)} MXN</span></div>
         <div class="dato"><b>Concepto</b><span class="v">ELAN ${esc(compra.ref)} <button class="copiar" type="button" data-copy="ELAN ${esc(compra.ref)}">Copiar</button></span></div>
