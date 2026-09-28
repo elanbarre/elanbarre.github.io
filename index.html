@@ -1285,8 +1285,19 @@ function conSesion(accion, subLogin){
 }
 
 /* ================== CALENDARIO ================== */
+/* Si ya pasó la última clase de la semana (viernes en la noche) o es fin de semana,
+   el calendario arranca en la semana siguiente para que se vean las clases por venir. */
+function baseCalendario(){
+  const hoy = new Date();
+  const lun = lunesDe(hoy);
+  const ultDia = CONFIG.diasHabiles[CONFIG.diasHabiles.length - 1];
+  const fin = new Date(lun); fin.setDate(lun.getDate() + (ultDia - 1));
+  const ultima = CONFIG.horarios[CONFIG.horarios.length - 1];
+  if (inicioClase(fmtISO(fin), ultima).getTime() <= Date.now()){ const b = new Date(hoy); b.setDate(hoy.getDate() + 7); return b; }
+  return hoy;
+}
 function diasDeSemana(offset){
-  const lun = lunesDe(new Date());
+  const lun = lunesDe(baseCalendario());
   lun.setDate(lun.getDate() + offset * 7);
   return CONFIG.diasHabiles.map(i => { const d = new Date(lun); d.setDate(lun.getDate() + (i - 1)); return d; });
 }
