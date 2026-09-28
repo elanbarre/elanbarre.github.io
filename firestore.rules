@@ -83,22 +83,24 @@ service cloud.firestore {
       let d = request.resource.data;
       return d.uid == uid && d.saldo == 0
         && d.nombre is string && d.telefono is string
-        && d.keys().hasOnly(['uid', 'email', 'nombre', 'telefono', 'saldo', 'creado', 'actualizado']);
+        && (!('salud' in d) || d.salud is map)
+        && d.keys().hasOnly(['uid', 'email', 'nombre', 'telefono', 'salud', 'saldo', 'creado', 'actualizado']);
     }
     function clienteUpdateValido(uid){
       let antes = resource.data;
       let d = request.resource.data;
       let cambios = d.diff(antes).affectedKeys();
       return d.uid == uid && d.saldo is int && d.saldo >= 0
-        && cambios.hasOnly(['nombre', 'telefono', 'email', 'actualizado', 'saldo', 'ultimaReserva', 'ultimaCancelacion'])
+        && (!('salud' in d) || d.salud is map)
+        && cambios.hasOnly(['nombre', 'telefono', 'salud', 'email', 'actualizado', 'saldo', 'ultimaReserva', 'ultimaCancelacion'])
         && (
           // edición de perfil: el saldo no cambia
           (d.saldo == antes.saldo && !cambios.hasAny(['ultimaReserva', 'ultimaCancelacion']))
           // reserva: −1 clase, ligada a la reserva que se confirma en este lote
-          || (d.saldo == antes.saldo - 1 && !cambios.hasAny(['nombre', 'telefono', 'ultimaCancelacion'])
+          || (d.saldo == antes.saldo - 1 && !cambios.hasAny(['nombre', 'telefono', 'salud', 'ultimaCancelacion'])
               && reservaConfirmadaEnLote(d.ultimaReserva, uid))
           // cancelación a tiempo: +1 clase, ligada a la reserva que se cancela en este lote
-          || (d.saldo == antes.saldo + 1 && !cambios.hasAny(['nombre', 'telefono', 'ultimaReserva'])
+          || (d.saldo == antes.saldo + 1 && !cambios.hasAny(['nombre', 'telefono', 'salud', 'ultimaReserva'])
               && reservaCanceladaEnLote(d.ultimaCancelacion, uid))
         );
     }
